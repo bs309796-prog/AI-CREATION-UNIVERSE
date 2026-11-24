@@ -19,6 +19,7 @@ import {
   Monitor,
   Play
 } from "lucide-react";
+import WebsiteStudio from "./WebsiteStudio";
 import "./style.css";
 
 function App() {
@@ -93,35 +94,57 @@ function App() {
             <Crown size={22} />
             <h3>Unlock your creativity</h3>
             <p>Explore advanced creation tools.</p>
-            <button onClick={() => setActive("Settings")}>Explore Plans <ArrowRight size={15}/></button>
+            <button onClick={() => setActive("Settings")}>
+              Explore Plans <ArrowRight size={15}/>
+            </button>
           </div>
           <div className="user-profile">
             <div className="avatar">AU</div>
-            <div><strong>Creator</strong><span>Free Workspace</span></div>
+            <div>
+              <strong>Creator</strong>
+              <span>Free Workspace</span>
+            </div>
           </div>
         </div>
       </aside>
 
       <main className="main-area">
         <header className="topbar">
-          <div className="mobile-brand"><Sparkles size={22}/> AI CREATION UNIVERSE</div>
-          <div className="breadcrumb">Workspace <span>/</span> {active}</div>
+          <div className="mobile-brand">
+            <Sparkles size={22}/> AI CREATION UNIVERSE
+          </div>
+          <div className="breadcrumb">
+            Workspace <span>/</span> {active}
+          </div>
           <div className="top-actions">
-            <span className="credits"><Sparkles size={15}/> Free Credits</span>
+            <span className="credits">
+              <Sparkles size={15}/> Free Credits
+            </span>
             <button className="avatar small">AU</button>
           </div>
         </header>
 
         <div className="content">
-          {active === "Overview" ? (
+
+          {active === "Website Studio" ? (
+            <WebsiteStudio onBack={() => setActive("Overview")} />
+          ) : active === "Overview" ? (
             <>
               <section className="welcome">
                 <div>
-                  <span className="eyebrow"><Sparkles size={14}/> YOUR CREATIVE UNIVERSE</span>
-                  <h1>Turn your ideas into <span>reality.</span></h1>
-                  <p>Create websites, games and apps with the power of AI.</p>
+                  <span className="eyebrow">
+                    <Sparkles size={14}/> YOUR CREATIVE UNIVERSE
+                  </span>
+                  <h1>
+                    Turn your ideas into <span>reality.</span>
+                  </h1>
+                  <p>
+                    Create websites, games and apps with the power of AI.
+                  </p>
                 </div>
-                <div className="welcome-art"><WandSparkles size={75}/></div>
+                <div className="welcome-art">
+                  <WandSparkles size={75}/>
+                </div>
               </section>
 
               <section className="prompt-box">
@@ -136,14 +159,20 @@ function App() {
                 />
                 <div className="prompt-footer">
                   <span>AI-powered creation starts with an idea.</span>
-                  <button onClick={() => setActive("AI Assistant")} disabled={!prompt.trim()}>
+                  <button
+                    onClick={() => setActive("AI Assistant")}
+                    disabled={!prompt.trim()}
+                  >
                     Generate with AI <ArrowRight size={17}/>
                   </button>
                 </div>
               </section>
 
               <div className="section-heading">
-                <div><h2>Creation Studios</h2><p>Choose your creative workspace</p></div>
+                <div>
+                  <h2>Creation Studios</h2>
+                  <p>Choose your creative workspace</p>
+                </div>
               </div>
 
               <section className="studio-grid">
@@ -151,7 +180,9 @@ function App() {
                   const Icon = studio.icon;
                   return (
                     <article className="studio-card" key={studio.name}>
-                      <div className={"studio-icon " + studio.color}><Icon size={26}/></div>
+                      <div className={"studio-icon " + studio.color}>
+                        <Icon size={26}/>
+                      </div>
                       <h3>{studio.name}</h3>
                       <p>{studio.description}</p>
                       <button onClick={() => setActive(studio.action)}>
@@ -164,38 +195,67 @@ function App() {
 
               <section className="bottom-grid">
                 <div className="panel">
-                  <div className="panel-heading"><h2>Recent Projects</h2><button onClick={() => setActive("My Projects")}>View all</button></div>
-                  <div className="empty-state"><FolderOpen size={35}/><strong>No projects yet</strong><span>Your creations will appear here.</span></div>
+                  <div className="panel-heading">
+                    <h2>Recent Projects</h2>
+                    <button onClick={() => setActive("My Projects")}>
+                      View all
+                    </button>
+                  </div>
+                  <div className="empty-state">
+                    <FolderOpen size={35}/>
+                    <strong>No projects yet</strong>
+                    <span>Your creations will appear here.</span>
+                  </div>
                 </div>
+
                 <div className="panel quick-panel">
                   <h2>Quick Start</h2>
-                  <button onClick={() => setActive("Website Studio")}><Globe/> Create a Website <ArrowRight/></button>
-                  <button onClick={() => setActive("Game Studio")}><Gamepad2/> Create a Game <ArrowRight/></button>
-                  <button onClick={() => setActive("App Studio")}><Smartphone/> Create an App <ArrowRight/></button>
+                  <button onClick={() => setActive("Website Studio")}>
+                    <Globe/> Create a Website <ArrowRight/>
+                  </button>
+                  <button onClick={() => setActive("Game Studio")}>
+                    <Gamepad2/> Create a Game <ArrowRight/>
+                  </button>
+                  <button onClick={() => setActive("App Studio")}>
+                    <Smartphone/> Create an App <ArrowRight/>
+                  </button>
                 </div>
               </section>
             </>
           ) : (
             <section className="workspace-page">
-              <span className="eyebrow"><Sparkles size={14}/> AI CREATION UNIVERSE</span>
+              <span className="eyebrow">
+                <Sparkles size={14}/> AI CREATION UNIVERSE
+              </span>
               <h1>{active}</h1>
               <p className="workspace-description">
                 Welcome to your {active}. Your creative workspace is ready.
               </p>
               <div className="workspace-placeholder">
-                {active === "Website Studio" ? <Globe size={55}/> :
-                 active === "Game Studio" ? <Gamepad2 size={55}/> :
+                {active === "Game Studio" ? <Gamepad2 size={55}/> :
                  active === "App Studio" ? <Smartphone size={55}/> :
                  active === "AI Assistant" ? <WandSparkles size={55}/> :
-                 active === "My Projects" ? <FolderOpen size={55}/> : <Settings size={55}/>}
-                <h2>{active === "AI Assistant" ? "Your AI creative assistant" : "Your workspace"}</h2>
-                <p>Advanced tools and project features will be connected in upcoming development steps.</p>
-                <button onClick={() => setActive("Overview")}>Back to Overview <ArrowRight size={16}/></button>
+                 active === "My Projects" ? <FolderOpen size={55}/> :
+                 <Settings size={55}/>}
+
+                <h2>
+                  {active === "AI Assistant"
+                    ? "Your AI creative assistant"
+                    : "Your workspace"}
+                </h2>
+                <p>
+                  Advanced tools and project features will be connected in upcoming development steps.
+                </p>
+                <button onClick={() => setActive("Overview")}>
+                  Back to Overview <ArrowRight size={16}/>
+                </button>
               </div>
             </section>
           )}
 
-          <footer>© 2026 AI Creation Universe. Create Anything. Build Everything.</footer>
+          <footer>
+            © 2026 AI Creation Universe. Create Anything. Build Everything.
+          </footer>
         </div>
       </main>
     </div>
