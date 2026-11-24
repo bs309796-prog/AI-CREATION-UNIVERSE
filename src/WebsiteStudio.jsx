@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import {
   Monitor, Smartphone, Type, Download, Sparkles,
-  Eye, Globe, ArrowLeft, Image, Layout, Layers,
-  Plus, Palette
+  Eye, Globe, ArrowLeft, Image as ImageIcon, Layout,
+  Layers, Plus, Palette, Upload, Trash2
 } from "lucide-react";
 
 export default function WebsiteStudio({ onBack }) {
@@ -17,6 +17,7 @@ export default function WebsiteStudio({ onBack }) {
   const [accent, setAccent] = useState("#8b5cf6");
 
   const [imageUrl, setImageUrl] = useState("");
+  const [uploadedImage, setUploadedImage] = useState("");
   const [aboutHeading, setAboutHeading] = useState("About Our Website");
   const [aboutText, setAboutText] = useState(
     "We create amazing experiences with creativity, technology and innovation."
@@ -32,6 +33,8 @@ export default function WebsiteStudio({ onBack }) {
   const [notice, setNotice] = useState("");
   const [mobile, setMobile] = useState(false);
   const [generating, setGenerating] = useState(false);
+
+  const activeImage = uploadedImage || imageUrl.trim();
 
   async function generateLayout() {
     if (!prompt.trim()) {
@@ -70,6 +73,37 @@ export default function WebsiteStudio({ onBack }) {
     }
   }
 
+  function handleImageUpload(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("Please select a valid image file.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("Please choose an image smaller than 5 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setUploadedImage(String(reader.result));
+      setImageUrl("");
+      setNotice("Your image has been added successfully!");
+    };
+
+    reader.onerror = () => {
+      setNotice("Image upload failed. Please try again.");
+    };
+
+    reader.readAsDataURL(file);
+  }
+
   function updateFeature(index, field, value) {
     setFeatures((old) =>
       old.map((item, i) =>
@@ -83,6 +117,10 @@ export default function WebsiteStudio({ onBack }) {
       ...old,
       { title: "New Feature", text: "Describe this feature here." }
     ]);
+  }
+
+  function removeFeature(index) {
+    setFeatures((old) => old.filter((_, i) => i !== index));
   }
 
   function exportWebsite() {
@@ -103,9 +141,9 @@ export default function WebsiteStudio({ onBack }) {
       </article>
     `).join("");
 
-    const imageHTML = imageUrl.trim()
+    const imageHTML = activeImage
       ? `<section class="image-section">
-          <img src="${esc(imageUrl)}" alt="${esc(siteName)}">
+          <img src="${esc(activeImage)}" alt="${esc(siteName)}">
         </section>`
       : "";
 
@@ -188,7 +226,8 @@ ${imageHTML}
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
     setNotice("Your complete website HTML is ready to download!");
   }
 
@@ -315,14 +354,79 @@ ${imageHTML}
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
-          <h3><Image size={18} /> Image Section</h3>
-          <label style={labelStyle}>Image URL (optional)</label>
+          <h3><ImageIcon size={18} /> Image Section</h3>
+
+          <label style={labelStyle}>Upload Image From Phone</label>
+          <label style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "9px",
+            width: "100%",
+            padding: "14px",
+            marginTop: "9px",
+            marginBottom: "14px",
+            borderRadius: "9px",
+            border: "1px dashed #8b5cf6",
+            background: "#211b3b",
+            color: "white",
+            cursor: "pointer"
+          }}>
+            <Upload size={18} /> Choose Image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          <label style={labelStyle}>Or Enter Image URL</label>
           <input
             style={fieldStyle}
             value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+            onChange={(e) => {
+              setImageUrl(e.target.value);
+              setUploadedImage("");
+            }}
             placeholder="https://example.com/image.jpg"
           />
+
+          {activeImage && (
+            <div style={{
+              background: "#0e1425",
+              padding: "10px",
+              borderRadius: "10px",
+              marginBottom: "15px"
+            }}>
+              <img
+                src={activeImage}
+                alt="Selected website"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  maxHeight: "180px",
+                  objectFit: "cover",
+                  borderRadius: "8px"
+                }}
+              />
+              <button
+                onClick={() => {
+                  setUploadedImage("");
+                  setImageUrl("");
+                  setNotice("Image removed.");
+                }}
+                style={{
+                  ...buttonStyle,
+                  background: "#991b1b",
+                  marginTop: "10px",
+                  width: "100%"
+                }}
+              >
+                <Trash2 size={15} /> Remove Image
+              </button>
+            </div>
+          )}
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
@@ -347,6 +451,16 @@ ${imageHTML}
                 value={feature.text}
                 onChange={(e) => updateFeature(index, "text", e.target.value)}
               />
+              <button
+                onClick={() => removeFeature(index)}
+                style={{
+                  ...buttonStyle,
+                  background: "#991b1b",
+                  padding: "8px 12px"
+                }}
+              >
+                <Trash2 size={14} /> Remove Card
+              </button>
             </div>
           ))}
           <button onClick={addFeature} style={{ ...buttonStyle, width: "100%" }}>
@@ -469,12 +583,18 @@ ${imageHTML}
                 }}>{buttonText}</button>
               </div>
 
-              {imageUrl.trim() && (
+              {activeImage && (
                 <div style={{ padding: "10px 18px" }}>
                   <img
-                    src={imageUrl}
+                    src={activeImage}
                     alt="Website"
-                    style={{ width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "12px" }}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      maxHeight: "200px",
+                      objectFit: "cover",
+                      borderRadius: "12px"
+                    }}
                   />
                 </div>
               )}
