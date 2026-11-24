@@ -1,8 +1,8 @@
 
 import React, { useState } from "react";
 import {
-  Monitor, Smartphone, Palette, Type, Download,
-  Sparkles, Eye, Globe, Layout, ArrowLeft, Plus
+  Monitor, Smartphone, Type, Download,
+  Sparkles, Eye, Globe, ArrowLeft
 } from "lucide-react";
 
 export default function WebsiteStudio({ onBack }) {
@@ -17,56 +17,67 @@ export default function WebsiteStudio({ onBack }) {
   const [prompt, setPrompt] = useState("");
   const [notice, setNotice] = useState("");
   const [mobile, setMobile] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
-  function generateLayout() {
+  async function generateLayout() {
     if (!prompt.trim()) {
       setNotice("Please enter your website idea first.");
       return;
     }
 
-    const idea = prompt.toLowerCase();
+    setGenerating(true);
+    setNotice("Gemini AI is creating your website...");
 
-    if (idea.includes("shop") || idea.includes("store") || idea.includes("ecommerce")) {
-      setSiteName("My Online Store");
-      setHeading("Discover Products You'll Love.");
-      setDescription("Explore our latest collection and find something special.");
-      setButtonText("Shop Now");
-      setAccent("#ec4899");
-    } else if (idea.includes("portfolio")) {
-      setSiteName("My Portfolio");
-      setHeading("Creative Ideas. Beautiful Results.");
-      setDescription("Welcome to my portfolio. Explore my work and experience.");
-      setButtonText("View My Work");
-      setAccent("#06b6d4");
-    } else if (idea.includes("restaurant") || idea.includes("food")) {
-      setSiteName("Food House");
-      setHeading("Fresh Food. Great Moments.");
-      setDescription("Discover delicious food made with love and fresh ingredients.");
-      setButtonText("Explore Menu");
-      setAccent("#f97316");
-    } else if (idea.includes("game")) {
-      setSiteName("Game Universe");
-      setHeading("Enter a World of Adventure.");
-      setDescription("Discover exciting games and start your next adventure.");
-      setButtonText("Play Now");
-      setAccent("#22c55e");
-    } else {
-      setSiteName("My New Website");
-      setHeading("Turn Your Ideas Into Reality.");
-      setDescription("Welcome to our website. Discover something amazing today.");
-      setButtonText("Explore Now");
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: prompt.trim()
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.error || "Gemini AI could not create the website."
+        );
+      }
+
+      setSiteName(data.siteName || "My New Website");
+      setHeading(data.heading || "Turn Your Ideas Into Reality.");
+      setDescription(data.description || "Welcome to your new website.");
+      setButtonText(data.buttonText || "Explore Now");
+      setBgColor(data.bgColor || "#111827");
+      setAccent(data.accent || "#7c3aed");
+
+      setNotice("Gemini AI created your website successfully!");
+    } catch (error) {
+      setNotice(error.message || "Something went wrong. Please try again.");
+    } finally {
+      setGenerating(false);
     }
-
-    setNotice("Starter layout created. Customize it in the editor!");
   }
 
   function exportWebsite() {
+    const escapeHTML = (value) =>
+      String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[char]);
+
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${siteName}</title>
+<title>${escapeHTML(siteName)}</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:${bgColor};color:white}
@@ -78,11 +89,11 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
 </style>
 </head>
 <body>
-<header>${siteName}</header>
+<header>${escapeHTML(siteName)}</header>
 <main>
-<h1>${heading}</h1>
-<p>${description}</p>
-<a href="#">${buttonText}</a>
+<h1>${escapeHTML(heading)}</h1>
+<p>${escapeHTML(description)}</p>
+<a href="#">${escapeHTML(buttonText)}</a>
 </main>
 </body>
 </html>`;
@@ -107,6 +118,15 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
     marginTop: "7px",
     marginBottom: "15px",
     fontSize: "14px"
+  };
+
+  const buttonStyle = {
+    background: "#7c3aed",
+    color: "white",
+    border: 0,
+    borderRadius: "9px",
+    padding: "12px 18px",
+    cursor: "pointer"
   };
 
   return (
@@ -136,21 +156,17 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
             <ArrowLeft size={16} /> Back to Dashboard
           </button>
           <h2 style={{ margin: 0 }}>AI Website Studio</h2>
-          <small style={{ color: "#9ca3af" }}>Design your website visually</small>
+          <small style={{ color: "#9ca3af" }}>
+            Powered by Gemini AI
+          </small>
         </div>
-        <button onClick={exportWebsite} style={{
-          background: "#7c3aed",
-          color: "white",
-          border: 0,
-          borderRadius: "9px",
-          padding: "12px 18px",
-          cursor: "pointer"
-        }}>
+
+        <button onClick={exportWebsite} style={buttonStyle}>
           <Download size={16} /> Export HTML
         </button>
       </div>
 
-      <div style={{
+      <div className="studio-grid" style={{
         display: "grid",
         gridTemplateColumns: "minmax(260px, 340px) minmax(0, 1fr)",
         gap: "20px"
@@ -159,57 +175,84 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
           background: "#151b2e",
           padding: "18px",
           borderRadius: "15px",
-          border: "1px solid #293149"
+          border: "1px solid #293149",
+          minWidth: 0
         }}>
           <h3><Sparkles size={18} /> Website AI Assistant</h3>
+
           <textarea
             value={prompt}
-            onChange={e => setPrompt(e.target.value)}
+            onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe your website idea..."
             rows={4}
             style={fieldStyle}
           />
-          <button onClick={generateLayout} style={{
-            width: "100%",
-            padding: "13px",
-            border: 0,
-            borderRadius: "9px",
-            background: "#7c3aed",
-            color: "white",
-            fontWeight: "bold",
-            cursor: "pointer"
-          }}>
-            <Sparkles size={16} /> Create Starter Layout
+
+          <button
+            onClick={generateLayout}
+            disabled={generating}
+            style={{
+              ...buttonStyle,
+              width: "100%",
+              padding: "13px",
+              fontWeight: "bold",
+              opacity: generating ? 0.7 : 1,
+              cursor: generating ? "wait" : "pointer"
+            }}
+          >
+            <Sparkles size={16} />
+            {generating ? "Generating with Gemini AI..." : "Generate with Gemini AI"}
           </button>
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
+
           <h3><Type size={18} /> Edit Website</h3>
 
           <label>Website Name</label>
-          <input style={fieldStyle} value={siteName}
-            onChange={e => setSiteName(e.target.value)} />
+          <input
+            style={fieldStyle}
+            value={siteName}
+            onChange={(e) => setSiteName(e.target.value)}
+          />
 
           <label>Main Heading</label>
-          <textarea style={fieldStyle} rows={2} value={heading}
-            onChange={e => setHeading(e.target.value)} />
+          <textarea
+            style={fieldStyle}
+            rows={2}
+            value={heading}
+            onChange={(e) => setHeading(e.target.value)}
+          />
 
           <label>Description</label>
-          <textarea style={fieldStyle} rows={3} value={description}
-            onChange={e => setDescription(e.target.value)} />
+          <textarea
+            style={fieldStyle}
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
           <label>Button Text</label>
-          <input style={fieldStyle} value={buttonText}
-            onChange={e => setButtonText(e.target.value)} />
+          <input
+            style={fieldStyle}
+            value={buttonText}
+            onChange={(e) => setButtonText(e.target.value)}
+          />
 
           <label>Background Color</label>
-          <input type="color" value={bgColor}
-            onChange={e => setBgColor(e.target.value)}
-            style={{ ...fieldStyle, height: "45px", padding: "4px" }} />
+          <input
+            type="color"
+            value={bgColor}
+            onChange={(e) => setBgColor(e.target.value)}
+            style={{ ...fieldStyle, height: "45px", padding: "4px" }}
+          />
 
           <label>Accent Color</label>
-          <input type="color" value={accent}
-            onChange={e => setAccent(e.target.value)}
-            style={{ ...fieldStyle, height: "45px", padding: "4px" }} />
+          <input
+            type="color"
+            value={accent}
+            onChange={(e) => setAccent(e.target.value)}
+            style={{ ...fieldStyle, height: "45px", padding: "4px" }}
+          />
         </section>
 
         <section style={{
@@ -228,21 +271,33 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
             marginBottom: "15px"
           }}>
             <strong><Eye size={17} /> Live Website Preview</strong>
+
             <div style={{ display: "flex", gap: "8px" }}>
-              <button onClick={() => setMobile(false)} style={{
-                padding: "8px",
-                borderRadius: "7px",
-                border: "1px solid #475569",
-                background: mobile ? "#111827" : "#7c3aed",
-                color: "white"
-              }}><Monitor size={17} /></button>
-              <button onClick={() => setMobile(true)} style={{
-                padding: "8px",
-                borderRadius: "7px",
-                border: "1px solid #475569",
-                background: mobile ? "#7c3aed" : "#111827",
-                color: "white"
-              }}><Smartphone size={17} /></button>
+              <button
+                onClick={() => setMobile(false)}
+                style={{
+                  padding: "8px",
+                  borderRadius: "7px",
+                  border: "1px solid #475569",
+                  background: mobile ? "#111827" : "#7c3aed",
+                  color: "white"
+                }}
+              >
+                <Monitor size={17} />
+              </button>
+
+              <button
+                onClick={() => setMobile(true)}
+                style={{
+                  padding: "8px",
+                  borderRadius: "7px",
+                  border: "1px solid #475569",
+                  background: mobile ? "#7c3aed" : "#111827",
+                  color: "white"
+                }}
+              >
+                <Smartphone size={17} />
+              </button>
             </div>
           </div>
 
@@ -273,6 +328,7 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
               }}>
                 <Globe size={18} /> {siteName}
               </div>
+
               <div style={{
                 minHeight: "390px",
                 padding: "45px 8%",
@@ -286,13 +342,19 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
                   fontSize: mobile ? "32px" : "clamp(30px, 4vw, 58px)",
                   lineHeight: 1.15,
                   margin: "0 0 20px"
-                }}>{heading}</h1>
+                }}>
+                  {heading}
+                </h1>
+
                 <p style={{
                   fontSize: "16px",
                   lineHeight: 1.7,
                   color: "#d1d5db",
                   maxWidth: "600px"
-                }}>{description}</p>
+                }}>
+                  {description}
+                </p>
+
                 <button style={{
                   background: accent,
                   color: "white",
@@ -301,20 +363,30 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
                   padding: "14px 25px",
                   marginTop: "20px",
                   fontWeight: "bold"
-                }}>{buttonText}</button>
+                }}>
+                  {buttonText}
+                </button>
               </div>
             </div>
           </div>
-          {notice && <p style={{ color: "#a5b4fc", fontSize: "13px" }}>{notice}</p>}
+
+          {notice && (
+            <p style={{
+              color: "#a5b4fc",
+              fontSize: "13px",
+              overflowWrap: "anywhere"
+            }}>
+              {notice}
+            </p>
+          )}
         </section>
       </div>
 
       <style>{`
         @media(max-width:760px){
-          div:has(> section) { }
-        }
-        @media(max-width:760px){
-          section { min-width:0; }
+          .studio-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+          }
         }
       `}</style>
     </div>
