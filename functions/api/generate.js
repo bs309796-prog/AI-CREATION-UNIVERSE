@@ -20,7 +20,8 @@ export async function onRequestPost({ request, env }) {
 
     const aiPrompt = `You are an expert professional website designer.
 
-Create a unique website design based on this idea:
+Create a unique, modern, professional website design based on this idea:
+
 ${prompt}
 
 Return ONLY valid JSON with these exact fields:
@@ -33,78 +34,93 @@ Return ONLY valid JSON with these exact fields:
   "accent": "#7c3aed"
 }
 
-Use attractive original content. Colors must be valid hex colors.`;
+Use attractive original content. Colors must be valid hex colors.
+Do not include Markdown or explanations.`;
 
-    const models = [
-      "gemini-3.7-flash",
-      "gemini-3.6-flash",
-      "gemini-3.5-flash"
-    ];
-
-    let lastError = "All Gemini models are currently unavailable.";
-    let generatedText = "";
-
-    for (const model of models) {
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/interactions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": env.GEMINI_API_KEY
-          },
-          body: JSON.stringify({
-            model,
-            input: aiPrompt
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        lastError = data.error?.message || `Gemini error: ${response.status}`;
-
-        if (
-          response.status === 429 ||
-          response.status === 500 ||
-          response.status === 502 ||
-          response.status === 503 ||
-          response.status === 504
-        ) {
-          continue;
-        }
-
-        return Response.json(
-          { error: lastError },
-          { status: response.status }
-        );
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": env.GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: aiPrompt }]
+            }
+          ],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.7,
+            maxOutputTokens: 1024
+          }
+        })
       }
+    );
 
-      generatedText = data.output_text ||
-        (data.output || [])
-          .filter(item => item.type === "text")
-          .map(item => item.text || "")
-          .join("\n");
+    const data = await response.json();
 
-      if (generatedText) break;
-
-      lastError = "Gemini returned an empty response.";
+    if (!response.ok) {
+      return Response.json(
+        {
+          error: data.error?.message || "Gemini API request failed.",
+          status: response.status
+        },
+        { status: response.status }
+      );
     }
+
+    const generatedText = (
+      data.candidates?.[0]?.content?.parts || []
+    )
+      .map(part => part.text || "")
+      .join("")
+      .trim();
 
     if (!generatedText) {
       return Response.json(
-        { error: lastError },
-        { status: 503 }
+        {
+          error: "Gemini returned an empty response.",
+          details: data.candidates?.[0]?.finishReason || "No text returned."
+        },
+        { status: 502 }
       );
     }
 
-    generatedText = generatedText.trim()
+    const cleanedText = generatedText
       .replace(/^```json\s*/i, "")
-      .replace(/^```\s*/, "")
-      .replace(/\s*```$/, "");
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/, "")
+      .trim();
 
-    const result = JSON.parse(generatedText);
+    const result = JSON.parse(cleanedText);
+
+    const requiredFields = [
+      "siteName",
+      "heading",
+      "description",
+      "buttonText",
+      "bgColor",
+      "accent"
+    ];
+
+    for (const field of requiredFields) {
+      if (typeof result[field] !== "string" || !result[field].trim()) {
+        throw new Error(`Invalid or missing field: ${field}`);
+      }
+    }
+
+    const colorPattern = /^#[0-9a-fA-F]{6}$/;
+
+    if (
+      !colorPattern.test(result.bgColor) ||
+      !colorPattern.test(result.accent)
+    ) {
+      throw new Error("Gemini returned invalid color values.");
+    }
 
     return Response.json({
       success: true,
