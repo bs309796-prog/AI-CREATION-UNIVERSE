@@ -29,6 +29,17 @@ export default function WebsiteStudio({ onBack }) {
     { title: "Built for Everyone", text: "Enjoy a smooth experience on every device." }
   ]);
 
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [registration, setRegistration] = useState({
+    playerName: "",
+    email: "",
+    gamingUsername: "",
+    gameName: "",
+    mobileNumber: ""
+  });
+  const [registering, setRegistering] = useState(false);
+  const [registrationMessage, setRegistrationMessage] = useState("");
+
   const [prompt, setPrompt] = useState("");
   const [notice, setNotice] = useState("");
   const [mobile, setMobile] = useState(false);
@@ -64,6 +75,10 @@ export default function WebsiteStudio({ onBack }) {
       setButtonText(data.buttonText || "Explore Now");
       setBgColor(data.bgColor || "#111827");
       setAccent(data.accent || "#7c3aed");
+
+      if (/tournament|esports|e-sports|gaming|game competition/i.test(prompt)) {
+        setShowRegistration(true);
+      }
 
       setNotice("Gemini AI created your website successfully!");
     } catch (error) {
@@ -123,6 +138,51 @@ export default function WebsiteStudio({ onBack }) {
     setFeatures((old) => old.filter((_, i) => i !== index));
   }
 
+  function updateRegistration(field, value) {
+    setRegistration((old) => ({ ...old, [field]: value }));
+  }
+
+  async function submitRegistration(event) {
+    event.preventDefault();
+
+    if (registering) return;
+
+    setRegistering(true);
+    setRegistrationMessage("Submitting your registration...");
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registration)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Registration failed.");
+      }
+
+      setRegistrationMessage(
+        data.message || "Registration submitted successfully!"
+      );
+
+      setRegistration({
+        playerName: "",
+        email: "",
+        gamingUsername: "",
+        gameName: "",
+        mobileNumber: ""
+      });
+    } catch (error) {
+      setRegistrationMessage(
+        error.message || "Could not submit registration. Please try again."
+      );
+    } finally {
+      setRegistering(false);
+    }
+  }
+
   function exportWebsite() {
     const esc = (value) =>
       String(value).replace(/[&<>"']/g, (char) => ({
@@ -147,6 +207,68 @@ export default function WebsiteStudio({ onBack }) {
         </section>`
       : "";
 
+    const registrationHTML = showRegistration ? `
+      <section class="section registration" id="register">
+        <h2>Tournament Registration</h2>
+        <p class="section-intro">Complete the form to register for the tournament.</p>
+        <form id="registration-form">
+          <label>Player Name
+            <input name="playerName" required maxlength="100" placeholder="Enter your name">
+          </label>
+          <label>Email Address
+            <input name="email" type="email" required maxlength="254" placeholder="Enter your email">
+          </label>
+          <label>Gaming Username
+            <input name="gamingUsername" required maxlength="50" placeholder="Enter your gaming username">
+          </label>
+          <label>Game Name
+            <input name="gameName" required maxlength="80" placeholder="Enter game name">
+          </label>
+          <label>Mobile Number
+            <input name="mobileNumber" type="tel" required maxlength="20" placeholder="Enter mobile number">
+          </label>
+          <button class="cta" type="submit">Submit Registration</button>
+          <p id="registration-message" role="status"></p>
+        </form>
+      </section>
+    ` : "";
+
+    const ctaTarget = showRegistration ? "#register" : "#features";
+
+    const registrationScript = showRegistration ? `
+      document.getElementById("registration-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const message = document.getElementById("registration-message");
+        const button = form.querySelector("button[type='submit']");
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        button.disabled = true;
+        message.textContent = "Submitting your registration...";
+
+        try {
+          const response = await fetch("/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            throw new Error(data.error || "Registration failed.");
+          }
+
+          message.textContent = data.message || "Registration submitted successfully!";
+          form.reset();
+        } catch (error) {
+          message.textContent = error.message || "Could not submit registration.";
+        } finally {
+          button.disabled = false;
+        }
+      });
+    ` : "";
+
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -165,7 +287,7 @@ nav{width:100%;padding:20px clamp(18px,6vw,80px);display:flex;justify-content:sp
 .hero{width:100%;min-height:540px;padding:85px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .hero h1{width:100%;max-width:950px;font-size:clamp(38px,7vw,76px);line-height:1.12;margin:0 auto 24px;overflow-wrap:anywhere}
 .hero p{width:100%;max-width:720px;font-size:clamp(16px,2vw,20px);line-height:1.8;color:#d1d5db;margin:0 auto}
-.cta{display:inline-block;margin-top:32px;padding:16px 32px;background:${accent};color:white;text-decoration:none;border-radius:10px;font-weight:bold}
+.cta{display:inline-block;margin-top:32px;padding:16px 32px;background:${accent};color:white;text-decoration:none;border:0;border-radius:10px;font-weight:bold;cursor:pointer}
 .section{width:100%;padding:75px clamp(20px,7vw,90px);text-align:center}
 .section h2{font-size:clamp(28px,4vw,42px);margin:0 0 18px}
 .section-intro{color:#cbd5e1;line-height:1.7;max-width:700px;margin:0 auto 35px}
@@ -178,6 +300,12 @@ nav{width:100%;padding:20px clamp(18px,6vw,80px);display:flex;justify-content:sp
 .image-section img{display:block;width:100%;max-width:1000px;max-height:520px;object-fit:cover;border-radius:18px;margin:auto}
 .about{background:#ffffff08}
 .about p{max-width:750px;margin:auto;color:#d1d5db;font-size:17px;line-height:1.9}
+.registration{background:#ffffff08}
+.registration form{max-width:520px;margin:auto;text-align:left}
+.registration label{display:block;color:#e5e7eb;margin:14px 0;font-size:14px}
+.registration input{display:block;width:100%;padding:14px;margin-top:7px;border:1px solid #475569;border-radius:9px;background:#111827;color:white;font-size:16px}
+.registration button{width:100%}
+#registration-message{color:#c4b5fd;line-height:1.6}
 footer{padding:30px 20px;text-align:center;border-top:1px solid #ffffff20;color:#9ca3af;font-size:14px}
 @media(max-width:700px){
  nav{align-items:flex-start;flex-direction:column}
@@ -194,6 +322,7 @@ footer{padding:30px 20px;text-align:center;border-top:1px solid #ffffff20;color:
   <div class="nav-links">
     <a href="#home">Home</a>
     <a href="#features">Features</a>
+    ${showRegistration ? '<a href="#register">Register</a>' : ""}
     <a href="#about">About</a>
   </div>
 </nav>
@@ -201,7 +330,7 @@ footer{padding:30px 20px;text-align:center;border-top:1px solid #ffffff20;color:
 <section class="hero" id="home">
   <h1>${esc(heading)}</h1>
   <p>${esc(description)}</p>
-  <a class="cta" href="#features">${esc(buttonText)}</a>
+  <a class="cta" href="${ctaTarget}">${esc(buttonText)}</a>
 </section>
 ${imageHTML}
 <section class="section" id="features">
@@ -209,12 +338,16 @@ ${imageHTML}
   <p class="section-intro">Discover what makes our experience special.</p>
   <div class="features">${featureHTML}</div>
 </section>
+${registrationHTML}
 <section class="section about" id="about">
   <h2>${esc(aboutHeading)}</h2>
   <p>${esc(aboutText)}</p>
 </section>
 </main>
 <footer>© ${new Date().getFullYear()} ${esc(siteName)}. All rights reserved.</footer>
+<script>
+${registrationScript}
+</script>
 </body>
 </html>`;
 
@@ -228,7 +361,11 @@ ${imageHTML}
     link.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), 2000);
-    setNotice("Your complete website HTML is ready to download!");
+    setNotice(
+      showRegistration
+        ? "Website exported. Registration API works when this file is hosted on the same Cloudflare Pages project."
+        : "Your website HTML is ready to download!"
+    );
   }
 
   const fieldStyle = {
@@ -469,6 +606,30 @@ ${imageHTML}
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          <h3>🏆 Tournament Registration</h3>
+          <label style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "12px",
+            borderRadius: "9px",
+            background: "#0e1425",
+            marginBottom: "15px"
+          }}>
+            <input
+              type="checkbox"
+              checked={showRegistration}
+              onChange={(e) => setShowRegistration(e.target.checked)}
+              style={{ width: "18px", height: "18px" }}
+            />
+            <span>Enable Tournament Registration Form</span>
+          </label>
+          <p style={{ color: "#9ca3af", fontSize: "12px", lineHeight: 1.6 }}>
+            When enabled, visitors can submit their details. The form sends data to your Cloudflare registration API.
+          </p>
+
+          <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
+
           <h3><Layout size={18} /> About Section</h3>
           <label style={labelStyle}>About Heading</label>
           <input style={fieldStyle} value={aboutHeading} onChange={(e) => setAboutHeading(e.target.value)} />
@@ -544,7 +705,9 @@ ${imageHTML}
                 borderBottom: "1px solid #ffffff20"
               }}>
                 <strong><Globe size={17} /> {siteName}</strong>
-                <span style={{ fontSize: "12px", color: "#cbd5e1" }}>Home　 Features　 About</span>
+                <span style={{ fontSize: "12px", color: "#cbd5e1" }}>
+                  Home　 Features　 {showRegistration ? "Register　" : ""}About
+                </span>
               </div>
 
               <div style={{
@@ -572,15 +735,28 @@ ${imageHTML}
                   color: "#d1d5db",
                   margin: 0
                 }}>{description}</p>
-                <button style={{
-                  background: accent,
-                  color: "white",
-                  border: 0,
-                  borderRadius: "9px",
-                  padding: "14px 25px",
-                  marginTop: "22px",
-                  fontWeight: "bold"
-                }}>{buttonText}</button>
+                <button
+                  onClick={() => {
+                    if (showRegistration) {
+                      document.getElementById("preview-registration")?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                      });
+                    } else {
+                      setNotice("Preview button selected.");
+                    }
+                  }}
+                  style={{
+                    background: accent,
+                    color: "white",
+                    border: 0,
+                    borderRadius: "9px",
+                    padding: "14px 25px",
+                    marginTop: "22px",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                >{buttonText}</button>
               </div>
 
               {activeImage && (
@@ -620,6 +796,96 @@ ${imageHTML}
                   ))}
                 </div>
               </div>
+
+              {showRegistration && (
+                <div id="preview-registration" style={{
+                  padding: "25px 18px",
+                  textAlign: "center",
+                  background: "#ffffff08"
+                }}>
+                  <h2>Tournament Registration</h2>
+                  <p style={{ color: "#cbd5e1", fontSize: "13px" }}>
+                    Fill in your details to register.
+                  </p>
+
+                  <form onSubmit={submitRegistration} style={{
+                    maxWidth: "440px",
+                    margin: "auto",
+                    textAlign: "left"
+                  }}>
+                    <label style={labelStyle}>Player Name</label>
+                    <input
+                      style={fieldStyle}
+                      required
+                      maxLength={100}
+                      value={registration.playerName}
+                      onChange={(e) => updateRegistration("playerName", e.target.value)}
+                      placeholder="Enter your name"
+                    />
+
+                    <label style={labelStyle}>Email Address</label>
+                    <input
+                      style={fieldStyle}
+                      type="email"
+                      required
+                      maxLength={254}
+                      value={registration.email}
+                      onChange={(e) => updateRegistration("email", e.target.value)}
+                      placeholder="Enter your email"
+                    />
+
+                    <label style={labelStyle}>Gaming Username</label>
+                    <input
+                      style={fieldStyle}
+                      required
+                      maxLength={50}
+                      value={registration.gamingUsername}
+                      onChange={(e) => updateRegistration("gamingUsername", e.target.value)}
+                      placeholder="Enter gaming username"
+                    />
+
+                    <label style={labelStyle}>Game Name</label>
+                    <input
+                      style={fieldStyle}
+                      required
+                      maxLength={80}
+                      value={registration.gameName}
+                      onChange={(e) => updateRegistration("gameName", e.target.value)}
+                      placeholder="Enter game name"
+                    />
+
+                    <label style={labelStyle}>Mobile Number</label>
+                    <input
+                      style={fieldStyle}
+                      type="tel"
+                      required
+                      maxLength={20}
+                      value={registration.mobileNumber}
+                      onChange={(e) => updateRegistration("mobileNumber", e.target.value)}
+                      placeholder="Enter mobile number"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={registering}
+                      style={{
+                        ...buttonStyle,
+                        width: "100%",
+                        opacity: registering ? 0.7 : 1
+                      }}
+                    >
+                      {registering ? "Submitting..." : "Submit Registration"}
+                    </button>
+                    {registrationMessage && (
+                      <p role="status" style={{
+                        color: "#c4b5fd",
+                        fontSize: "13px",
+                        lineHeight: 1.6
+                      }}>{registrationMessage}</p>
+                    )}
+                  </form>
+                </div>
+              )}
 
               <div style={{ padding: "25px 18px", textAlign: "center", background: "#ffffff08" }}>
                 <h2>{aboutHeading}</h2>
