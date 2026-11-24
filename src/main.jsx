@@ -17,9 +17,11 @@ import {
   ArrowRight,
   Crown,
   Monitor,
-  Play
+  Play,
+  ShieldCheck
 } from "lucide-react";
 import WebsiteStudio from "./WebsiteStudio";
+import AdminDashboard from "./AdminDashboard";
 import "./style.css";
 
 function App() {
@@ -33,6 +35,7 @@ function App() {
     { name: "App Studio", icon: Smartphone },
     { name: "My Projects", icon: FolderOpen },
     { name: "AI Assistant", icon: Sparkles },
+    { name: "Admin Dashboard", icon: ShieldCheck },
     { name: "Settings", icon: Settings }
   ];
 
@@ -128,6 +131,8 @@ function App() {
 
           {active === "Website Studio" ? (
             <WebsiteStudio onBack={() => setActive("Overview")} />
+          ) : active === "Admin Dashboard" ? (
+            <AdminDashboard onBack={() => setActive("Overview")} />
           ) : active === "Overview" ? (
             <>
               <section className="welcome">
