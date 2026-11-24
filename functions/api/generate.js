@@ -13,23 +13,13 @@ export async function onRequestPost({ request, env }) {
 
     if (!prompt) {
       return Response.json(
-        { error: "Please enter your creation idea." },
+        { error: "Please enter your website idea." },
         { status: 400 }
       );
     }
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": env.GEMINI_API_KEY
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are an expert professional website designer.
+    const aiPrompt = `You are an expert professional website designer.
+
 Create a unique website design based on this idea:
 ${prompt}
 
@@ -42,13 +32,20 @@ Return ONLY valid JSON with these exact fields:
   "bgColor": "#111827",
   "accent": "#7c3aed"
 }
-Use attractive original content. Colors must be valid hex colors.`
-            }]
-          }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            temperature: 0.8
-          }
+
+Use attractive original content. Colors must be valid hex colors.`;
+
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/interactions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": env.GEMINI_API_KEY
+        },
+        body: JSON.stringify({
+          model: "gemini-3.8-flash",
+          input: aiPrompt
         })
       }
     );
@@ -62,7 +59,7 @@ Use attractive original content. Colors must be valid hex colors.`
       );
     }
 
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    let text = data.output_text;
 
     if (!text) {
       return Response.json(
@@ -70,6 +67,11 @@ Use attractive original content. Colors must be valid hex colors.`
         { status: 502 }
       );
     }
+
+    text = text.trim()
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/, "")
+      .replace(/\s*```$/, "");
 
     const result = JSON.parse(text);
 
