@@ -35,45 +35,76 @@ Return ONLY valid JSON with these exact fields:
 
 Use attractive original content. Colors must be valid hex colors.`;
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/interactions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": env.GEMINI_API_KEY
-        },
-        body: JSON.stringify({
-          model: "gemini-3.8-flash",
-          input: aiPrompt
-        })
+    const models = [
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "gemini-3.5-flash"
+    ];
+
+    let lastError = "All Gemini models are currently unavailable.";
+    let generatedText = "";
+
+    for (const model of models) {
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/interactions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": env.GEMINI_API_KEY
+          },
+          body: JSON.stringify({
+            model,
+            input: aiPrompt
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        lastError = data.error?.message || `Gemini error: ${response.status}`;
+
+        if (
+          response.status === 429 ||
+          response.status === 500 ||
+          response.status === 502 ||
+          response.status === 503 ||
+          response.status === 504
+        ) {
+          continue;
+        }
+
+        return Response.json(
+          { error: lastError },
+          { status: response.status }
+        );
       }
-    );
 
-    const data = await response.json();
+      generatedText = data.output_text ||
+        (data.output || [])
+          .filter(item => item.type === "text")
+          .map(item => item.text || "")
+          .join("\n");
 
-    if (!response.ok) {
+      if (generatedText) break;
+
+      lastError = "Gemini returned an empty response.";
+    }
+
+    if (!generatedText) {
       return Response.json(
-        { error: data.error?.message || "Gemini API request failed." },
-        { status: response.status }
+        { error: lastError },
+        { status: 503 }
       );
     }
 
-    let text = data.output_text;
-
-    if (!text) {
-      return Response.json(
-        { error: "Gemini returned an empty response." },
-        { status: 502 }
-      );
-    }
-
-    text = text.trim()
+    generatedText = generatedText.trim()
       .replace(/^```json\s*/i, "")
       .replace(/^```\s*/, "")
       .replace(/\s*```$/, "");
 
-    const result = JSON.parse(text);
+    const result = JSON.parse(generatedText);
 
     return Response.json({
       success: true,
