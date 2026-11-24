@@ -31,12 +31,8 @@ export default function WebsiteStudio({ onBack }) {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          prompt: prompt.trim()
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt.trim() })
       });
 
       const data = await response.json();
@@ -77,15 +73,115 @@ export default function WebsiteStudio({ onBack }) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="${bgColor}">
 <title>${escapeHTML(siteName)}</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:${bgColor};color:white}
-header{padding:25px 8%;font-size:22px;font-weight:bold}
-main{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
-h1{font-size:clamp(36px,7vw,68px);max-width:850px}
-p{font-size:18px;line-height:1.7;color:#d1d5db;max-width:650px}
-a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;background:${accent};color:white;text-decoration:none;font-weight:bold}
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background: ${bgColor};
+  color: white;
+}
+
+header {
+  width: 100%;
+  padding: 22px clamp(18px, 6vw, 80px);
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+main {
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 65px 20px;
+  margin: 0 auto;
+}
+
+h1 {
+  width: 100%;
+  max-width: 900px;
+  font-size: clamp(32px, 7vw, 68px);
+  line-height: 1.15;
+  margin: 0 auto 22px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+p {
+  width: 100%;
+  max-width: 680px;
+  font-size: clamp(16px, 2.5vw, 20px);
+  line-height: 1.7;
+  color: #d1d5db;
+  margin: 0 auto;
+  overflow-wrap: anywhere;
+}
+
+a {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 28px;
+  padding: 15px 32px;
+  border-radius: 10px;
+  background: ${accent};
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 17px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+a:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 20px 18px;
+    font-size: 19px;
+  }
+
+  main {
+    min-height: 75vh;
+    padding: 55px 22px;
+  }
+
+  h1 {
+    font-size: clamp(30px, 8vw, 44px);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  a {
+    padding: 14px 26px;
+    font-size: 16px;
+  }
+}
 </style>
 </head>
 <body>
@@ -98,18 +194,23 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
 </body>
 </html>`;
 
-    const blob = new Blob([html], { type: "text/html" });
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "my-website.html";
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
-    setNotice("HTML file export started!");
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setNotice("Responsive HTML file export started!");
   }
 
   const fieldStyle = {
     width: "100%",
+    maxWidth: "100%",
     padding: "12px",
     borderRadius: "9px",
     border: "1px solid #374151",
@@ -117,7 +218,8 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
     color: "white",
     marginTop: "7px",
     marginBottom: "15px",
-    fontSize: "14px"
+    fontSize: "14px",
+    boxSizing: "border-box"
   };
 
   const buttonStyle = {
@@ -132,6 +234,9 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
   return (
     <div style={{
       minHeight: "100vh",
+      width: "100%",
+      boxSizing: "border-box",
+      overflowX: "hidden",
       background: "#080b18",
       color: "white",
       padding: "20px",
@@ -155,7 +260,9 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
           }}>
             <ArrowLeft size={16} /> Back to Dashboard
           </button>
+
           <h2 style={{ margin: 0 }}>AI Website Studio</h2>
+
           <small style={{ color: "#9ca3af" }}>
             Powered by Gemini AI
           </small>
@@ -168,8 +275,9 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
 
       <div className="studio-grid" style={{
         display: "grid",
-        gridTemplateColumns: "minmax(260px, 340px) minmax(0, 1fr)",
-        gap: "20px"
+        gridTemplateColumns: "minmax(0, 340px) minmax(0, 1fr)",
+        gap: "20px",
+        width: "100%"
       }}>
         <section style={{
           background: "#151b2e",
@@ -201,7 +309,9 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
             }}
           >
             <Sparkles size={16} />
-            {generating ? "Generating with Gemini AI..." : "Generate with Gemini AI"}
+            {generating
+              ? "Generating with Gemini AI..."
+              : "Generate with Gemini AI"}
           </button>
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
@@ -308,7 +418,8 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
             minHeight: "500px",
             display: "flex",
             justifyContent: "center",
-            overflow: "auto"
+            overflow: "hidden",
+            minWidth: 0
           }}>
             <div style={{
               width: mobile ? "375px" : "100%",
@@ -318,12 +429,14 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
               color: "white",
               borderRadius: mobile ? "18px" : "5px",
               overflow: "hidden",
-              transition: "width .2s"
+              transition: "width .2s",
+              boxSizing: "border-box"
             }}>
               <div style={{
                 padding: "22px 7%",
                 fontSize: "20px",
                 fontWeight: "bold",
+                overflowWrap: "anywhere",
                 borderBottom: "1px solid #ffffff20"
               }}>
                 <Globe size={18} /> {siteName}
@@ -336,21 +449,30 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                textAlign: "center"
+                textAlign: "center",
+                boxSizing: "border-box"
               }}>
                 <h1 style={{
-                  fontSize: mobile ? "32px" : "clamp(30px, 4vw, 58px)",
+                  width: "100%",
+                  maxWidth: "900px",
+                  fontSize: mobile
+                    ? "clamp(28px, 8vw, 38px)"
+                    : "clamp(30px, 4vw, 58px)",
                   lineHeight: 1.15,
+                  overflowWrap: "anywhere",
                   margin: "0 0 20px"
                 }}>
                   {heading}
                 </h1>
 
                 <p style={{
+                  width: "100%",
+                  maxWidth: "600px",
                   fontSize: "16px",
                   lineHeight: 1.7,
                   color: "#d1d5db",
-                  maxWidth: "600px"
+                  overflowWrap: "anywhere",
+                  margin: 0
                 }}>
                   {description}
                 </p>
@@ -362,7 +484,8 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
                   borderRadius: "9px",
                   padding: "14px 25px",
                   marginTop: "20px",
-                  fontWeight: "bold"
+                  fontWeight: "bold",
+                  maxWidth: "100%"
                 }}>
                   {buttonText}
                 </button>
@@ -383,9 +506,19 @@ a{display:inline-block;margin-top:20px;padding:15px 30px;border-radius:9px;backg
       </div>
 
       <style>{`
-        @media(max-width:760px){
+        * {
+          box-sizing: border-box;
+        }
+
+        @media(max-width:760px) {
           .studio-grid {
             grid-template-columns: minmax(0, 1fr) !important;
+          }
+        }
+
+        @media(max-width:480px) {
+          .studio-grid {
+            gap: 14px !important;
           }
         }
       `}</style>
