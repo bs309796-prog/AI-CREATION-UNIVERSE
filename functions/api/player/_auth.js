@@ -1,3 +1,4 @@
+
 const SESSION_DAYS = 7;
 const PASSWORD_ITERATIONS = 210000;
 
@@ -72,7 +73,7 @@ export async function createSession(db, playerId) {
 
   return {
     "Set-Cookie":
-      `acu_player_session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/api/player; Max-Age=${SESSION_DAYS * 86400}`
+      `acu_player_session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/api; Max-Age=${SESSION_DAYS * 86400}`
   };
 }
 
@@ -109,7 +110,7 @@ export async function getPlayer(request, db) {
 export function clearSessionCookie() {
   return {
     "Set-Cookie":
-      "acu_player_session=; HttpOnly; Secure; SameSite=Lax; Path=/api/player; Max-Age=0"
+      "acu_player_session=; HttpOnly; Secure; SameSite=Lax; Path=/api; Max-Age=0"
   };
 }
 
