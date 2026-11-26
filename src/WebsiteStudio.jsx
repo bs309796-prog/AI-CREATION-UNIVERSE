@@ -3,33 +3,38 @@ import React, { useState } from "react";
 import {
   Monitor, Smartphone, Type, Download, Sparkles,
   Eye, Globe, ArrowLeft, Image as ImageIcon, Layout,
-  Layers, Plus, Palette, Upload, Trash2
+  Layers, Plus, Palette, Upload, Trash2, Gamepad2
 } from "lucide-react";
 
 export default function WebsiteStudio({ onBack }) {
-  const [siteName, setSiteName] = useState("My Website");
-  const [heading, setHeading] = useState("Build Something Amazing.");
+  const [siteName, setSiteName] = useState("Nexus Esports");
+  const [heading, setHeading] = useState("ENTER THE BATTLE. CLAIM THE GLORY.");
   const [description, setDescription] = useState(
-    "Create your future with our powerful digital solutions."
+    "Compete with the best players. Join tournaments, build your squad and become a champion."
   );
-  const [buttonText, setButtonText] = useState("Get Started");
-  const [bgColor, setBgColor] = useState("#111827");
+  const [buttonText, setButtonText] = useState("JOIN TOURNAMENT");
+  const [bgColor, setBgColor] = useState("#080b18");
   const [accent, setAccent] = useState("#8b5cf6");
 
+  // Gaming Hero Background
+  const [heroBackgroundImage, setHeroBackgroundImage] = useState("");
+  const [heroOverlay, setHeroOverlay] = useState(0.65);
+
+  // Normal Website Image
   const [imageUrl, setImageUrl] = useState("");
   const [uploadedImage, setUploadedImage] = useState("");
-  const [aboutHeading, setAboutHeading] = useState("About Our Website");
+  const [aboutHeading, setAboutHeading] = useState("About Nexus Esports");
   const [aboutText, setAboutText] = useState(
-    "We create amazing experiences with creativity, technology and innovation."
+    "We create amazing gaming experiences with competition, technology and innovation."
   );
 
   const [features, setFeatures] = useState([
-    { title: "Creative Design", text: "Beautiful designs made for your audience." },
-    { title: "Powerful Features", text: "Everything you need in one place." },
-    { title: "Built for Everyone", text: "Enjoy a smooth experience on every device." }
+    { title: "Epic Tournaments", text: "Compete in exciting esports tournaments." },
+    { title: "Pro Gaming Community", text: "Connect with passionate gamers." },
+    { title: "Amazing Rewards", text: "Play hard and earn exciting rewards." }
   ]);
 
-  const [showRegistration, setShowRegistration] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(true);
   const [registration, setRegistration] = useState({
     playerName: "",
     email: "",
@@ -37,15 +42,46 @@ export default function WebsiteStudio({ onBack }) {
     gameName: "",
     mobileNumber: ""
   });
+
   const [registering, setRegistering] = useState(false);
   const [registrationMessage, setRegistrationMessage] = useState("");
-
   const [prompt, setPrompt] = useState("");
   const [notice, setNotice] = useState("");
   const [mobile, setMobile] = useState(false);
   const [generating, setGenerating] = useState(false);
 
   const activeImage = uploadedImage || imageUrl.trim();
+
+  // Gaming Background Upload
+  function handleHeroBackgroundUpload(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("Please select a valid gaming background image.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("Please select an image smaller than 5 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setHeroBackgroundImage(String(reader.result));
+      setNotice("Gaming Hero background added successfully!");
+    };
+
+    reader.onerror = () => {
+      setNotice("Background upload failed. Please try again.");
+    };
+
+    reader.readAsDataURL(file);
+  }
 
   async function generateLayout() {
     if (!prompt.trim()) {
@@ -66,7 +102,7 @@ export default function WebsiteStudio({ onBack }) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || "Gemini AI could not create the website.");
+        throw new Error(data.error || "AI could not create the website.");
       }
 
       setSiteName(data.siteName || "My New Website");
@@ -76,11 +112,15 @@ export default function WebsiteStudio({ onBack }) {
       setBgColor(data.bgColor || "#111827");
       setAccent(data.accent || "#7c3aed");
 
+      if (data.heroBackgroundImage) {
+        setHeroBackgroundImage(data.heroBackgroundImage);
+      }
+
       if (/tournament|esports|e-sports|gaming|game competition/i.test(prompt)) {
         setShowRegistration(true);
       }
 
-      setNotice("Gemini AI created your website successfully!");
+      setNotice("AI created your website successfully!");
     } catch (error) {
       setNotice(error.message || "Something went wrong. Please try again.");
     } finally {
@@ -120,7 +160,7 @@ export default function WebsiteStudio({ onBack }) {
   }
 
   function updateFeature(index, field, value) {
-    setFeatures((old) =>
+    setFeatures(old =>
       old.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
@@ -128,23 +168,22 @@ export default function WebsiteStudio({ onBack }) {
   }
 
   function addFeature() {
-    setFeatures((old) => [
+    setFeatures(old => [
       ...old,
       { title: "New Feature", text: "Describe this feature here." }
     ]);
   }
 
   function removeFeature(index) {
-    setFeatures((old) => old.filter((_, i) => i !== index));
+    setFeatures(old => old.filter((_, i) => i !== index));
   }
 
   function updateRegistration(field, value) {
-    setRegistration((old) => ({ ...old, [field]: value }));
+    setRegistration(old => ({ ...old, [field]: value }));
   }
 
   async function submitRegistration(event) {
     event.preventDefault();
-
     if (registering) return;
 
     setRegistering(true);
@@ -175,17 +214,16 @@ export default function WebsiteStudio({ onBack }) {
         mobileNumber: ""
       });
     } catch (error) {
-      setRegistrationMessage(
-        error.message || "Could not submit registration. Please try again."
-      );
+      setRegistrationMessage(error.message || "Registration failed.");
     } finally {
       setRegistering(false);
     }
   }
 
+  // Export Website
   function exportWebsite() {
-    const esc = (value) =>
-      String(value).replace(/[&<>"']/g, (char) => ({
+    const esc = value =>
+      String(value).replace(/[&<>"']/g, char => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
@@ -193,7 +231,10 @@ export default function WebsiteStudio({ onBack }) {
         "'": "&#39;"
       })[char]);
 
-    const featureHTML = features.map((item) => `
+    const cssUrl = value =>
+      String(value).replace(/[\\"'\n\r]/g, char => "\\" + char);
+
+    const featuresHTML = features.map(item => `
       <article class="feature-card">
         <div class="feature-icon">✦</div>
         <h3>${esc(item.title)}</h3>
@@ -210,7 +251,7 @@ export default function WebsiteStudio({ onBack }) {
     const registrationHTML = showRegistration ? `
       <section class="section registration" id="register">
         <h2>Tournament Registration</h2>
-        <p class="section-intro">Complete the form to register for the tournament.</p>
+        <p class="section-intro">Complete the form to register.</p>
         <form id="registration-form">
           <label>Player Name
             <input name="playerName" required maxlength="100" placeholder="Enter your name">
@@ -219,7 +260,7 @@ export default function WebsiteStudio({ onBack }) {
             <input name="email" type="email" required maxlength="254" placeholder="Enter your email">
           </label>
           <label>Gaming Username
-            <input name="gamingUsername" required maxlength="50" placeholder="Enter your gaming username">
+            <input name="gamingUsername" required maxlength="50" placeholder="Gaming username">
           </label>
           <label>Game Name
             <input name="gameName" required maxlength="80" placeholder="Enter game name">
@@ -233,19 +274,17 @@ export default function WebsiteStudio({ onBack }) {
       </section>
     ` : "";
 
-    const ctaTarget = showRegistration ? "#register" : "#features";
-
     const registrationScript = showRegistration ? `
       document.getElementById("registration-form").addEventListener("submit", async function(event) {
         event.preventDefault();
+
         const form = event.currentTarget;
         const message = document.getElementById("registration-message");
         const button = form.querySelector("button[type='submit']");
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData.entries());
+        const payload = Object.fromEntries(new FormData(form).entries());
 
         button.disabled = true;
-        message.textContent = "Submitting your registration...";
+        message.textContent = "Submitting registration...";
 
         try {
           const response = await fetch("/api/register", {
@@ -253,21 +292,28 @@ export default function WebsiteStudio({ onBack }) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
+
           const data = await response.json();
 
           if (!response.ok || !data.success) {
             throw new Error(data.error || "Registration failed.");
           }
 
-          message.textContent = data.message || "Registration submitted successfully!";
+          message.textContent = data.message || "Registration successful!";
           form.reset();
         } catch (error) {
-          message.textContent = error.message || "Could not submit registration.";
+          message.textContent = error.message || "Registration failed.";
         } finally {
           button.disabled = false;
         }
       });
     ` : "";
+
+    const heroBackground = heroBackgroundImage
+      ? `background-image:linear-gradient(rgba(5,8,20,${heroOverlay}),rgba(5,8,20,${heroOverlay})),url("${cssUrl(heroBackgroundImage)}");`
+      : `background:linear-gradient(135deg,#080b18,#20104a,#080b18);`;
+
+    const ctaTarget = showRegistration ? "#register" : "#features";
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -276,49 +322,106 @@ export default function WebsiteStudio({ onBack }) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="${esc(bgColor)}">
 <title>${esc(siteName)}</title>
+
 <style>
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;width:100%;overflow-x:hidden}
-body{margin:0;width:100%;min-height:100vh;overflow-x:hidden;font-family:Arial,Helvetica,sans-serif;background:${bgColor};color:white}
-nav{width:100%;padding:20px clamp(18px,6vw,80px);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid #ffffff20}
-.brand{font-size:22px;font-weight:bold;overflow-wrap:anywhere}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{margin:0;min-height:100vh;overflow-x:hidden;font-family:Arial,Helvetica,sans-serif;background:${esc(bgColor)};color:white}
+
+nav{padding:20px clamp(18px,6vw,80px);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid #ffffff20}
+.brand{font-size:24px;font-weight:bold;color:white}
 .nav-links{display:flex;gap:22px;flex-wrap:wrap}
 .nav-links a{color:#d1d5db;text-decoration:none;font-size:14px}
-.hero{width:100%;min-height:540px;padding:85px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.hero h1{width:100%;max-width:950px;font-size:clamp(38px,7vw,76px);line-height:1.12;margin:0 auto 24px;overflow-wrap:anywhere}
-.hero p{width:100%;max-width:720px;font-size:clamp(16px,2vw,20px);line-height:1.8;color:#d1d5db;margin:0 auto}
-.cta{display:inline-block;margin-top:32px;padding:16px 32px;background:${accent};color:white;text-decoration:none;border:0;border-radius:10px;font-weight:bold;cursor:pointer}
+
+.hero{
+width:100%;
+min-height:650px;
+padding:90px 22px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+position:relative;
+isolation:isolate;
+${heroBackground}
+}
+
+.hero h1{
+width:100%;
+max-width:1000px;
+font-size:clamp(38px,7vw,78px);
+line-height:1.12;
+margin:0 auto 25px;
+overflow-wrap:anywhere;
+text-shadow:0 4px 25px #000;
+}
+
+.hero p{
+width:100%;
+max-width:750px;
+font-size:clamp(16px,2vw,20px);
+line-height:1.8;
+color:#e5e7eb;
+margin:0 auto;
+text-shadow:0 2px 12px #000;
+}
+
+.cta{
+display:inline-block;
+margin-top:32px;
+padding:16px 32px;
+background:${esc(accent)};
+color:white;
+text-decoration:none;
+border:0;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+transition:transform .2s,filter .2s;
+}
+.cta:hover{transform:translateY(-3px);filter:brightness(1.15)}
+
 .section{width:100%;padding:75px clamp(20px,7vw,90px);text-align:center}
 .section h2{font-size:clamp(28px,4vw,42px);margin:0 0 18px}
 .section-intro{color:#cbd5e1;line-height:1.7;max-width:700px;margin:0 auto 35px}
+
 .features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;max-width:1150px;margin:auto}
 .feature-card{background:#ffffff0d;border:1px solid #ffffff20;border-radius:16px;padding:30px 22px;text-align:left}
-.feature-icon{font-size:30px;color:${accent};margin-bottom:16px}
+.feature-icon{font-size:30px;color:${esc(accent)};margin-bottom:16px}
 .feature-card h3{font-size:21px;margin:0 0 12px}
 .feature-card p{color:#cbd5e1;line-height:1.7;margin:0}
+
 .image-section{padding:10px 20px 65px;text-align:center}
 .image-section img{display:block;width:100%;max-width:1000px;max-height:520px;object-fit:cover;border-radius:18px;margin:auto}
-.about{background:#ffffff08}
+
+.about,.registration{background:#ffffff08}
 .about p{max-width:750px;margin:auto;color:#d1d5db;font-size:17px;line-height:1.9}
-.registration{background:#ffffff08}
+
 .registration form{max-width:520px;margin:auto;text-align:left}
 .registration label{display:block;color:#e5e7eb;margin:14px 0;font-size:14px}
 .registration input{display:block;width:100%;padding:14px;margin-top:7px;border:1px solid #475569;border-radius:9px;background:#111827;color:white;font-size:16px}
 .registration button{width:100%}
 #registration-message{color:#c4b5fd;line-height:1.6}
+
 footer{padding:30px 20px;text-align:center;border-top:1px solid #ffffff20;color:#9ca3af;font-size:14px}
+
 @media(max-width:700px){
  nav{align-items:flex-start;flex-direction:column}
  .nav-links{gap:16px}
- .hero{min-height:470px;padding:65px 22px}
+ .hero{min-height:520px;padding:65px 22px}
  .features{grid-template-columns:1fr}
  .section{padding:55px 20px}
 }
 </style>
 </head>
+
 <body>
 <nav>
-  <div class="brand">${esc(siteName)}</div>
+  <div class="brand">🎮 ${esc(siteName)}</div>
   <div class="nav-links">
     <a href="#home">Home</a>
     <a href="#features">Features</a>
@@ -326,25 +429,32 @@ footer{padding:30px 20px;text-align:center;border-top:1px solid #ffffff20;color:
     <a href="#about">About</a>
   </div>
 </nav>
+
 <main>
 <section class="hero" id="home">
   <h1>${esc(heading)}</h1>
   <p>${esc(description)}</p>
   <a class="cta" href="${ctaTarget}">${esc(buttonText)}</a>
 </section>
+
 ${imageHTML}
+
 <section class="section" id="features">
   <h2>Our Features</h2>
-  <p class="section-intro">Discover what makes our experience special.</p>
-  <div class="features">${featureHTML}</div>
+  <p class="section-intro">Discover what makes our gaming experience special.</p>
+  <div class="features">${featuresHTML}</div>
 </section>
+
 ${registrationHTML}
+
 <section class="section about" id="about">
   <h2>${esc(aboutHeading)}</h2>
   <p>${esc(aboutText)}</p>
 </section>
 </main>
+
 <footer>© ${new Date().getFullYear()} ${esc(siteName)}. All rights reserved.</footer>
+
 <script>
 ${registrationScript}
 </script>
@@ -354,16 +464,18 @@ ${registrationScript}
     const blob = new Blob([html], { type: "text/html;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
+
     link.href = url;
-    link.download = "my-website.html";
+    link.download = "nexus-esports-website.html";
     document.body.appendChild(link);
     link.click();
     link.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), 2000);
+
     setNotice(
       showRegistration
-        ? "Website exported. Registration API works when this file is hosted on the same Cloudflare Pages project."
+        ? "Website exported. Registration API requires hosting on the same Cloudflare project."
         : "Your website HTML is ready to download!"
     );
   }
@@ -398,6 +510,10 @@ ${registrationScript}
     marginTop: "5px"
   };
 
+  const previewHeroBackground = heroBackgroundImage
+    ? `linear-gradient(rgba(5,8,20,${heroOverlay}),rgba(5,8,20,${heroOverlay})),url("${heroBackgroundImage}")`
+    : "linear-gradient(135deg,#080b18,#20104a,#080b18)";
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -409,6 +525,8 @@ ${registrationScript}
       fontFamily: "Arial,sans-serif",
       boxSizing: "border-box"
     }}>
+
+      {/* Studio Header */}
       <div style={{
         display: "flex",
         alignItems: "center",
@@ -442,6 +560,8 @@ ${registrationScript}
         gap: "20px",
         width: "100%"
       }}>
+
+        {/* LEFT EDITOR */}
         <section style={{
           background: "#151b2e",
           padding: "18px",
@@ -449,18 +569,25 @@ ${registrationScript}
           border: "1px solid #293149",
           minWidth: 0
         }}>
+
           <h3><Sparkles size={18} /> Website AI Assistant</h3>
+
           <textarea
             value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            onChange={e => setPrompt(e.target.value)}
             placeholder="Describe your website idea..."
             rows={4}
             style={fieldStyle}
           />
+
           <button
             onClick={generateLayout}
             disabled={generating}
-            style={{ ...buttonStyle, width: "100%", opacity: generating ? 0.7 : 1 }}
+            style={{
+              ...buttonStyle,
+              width: "100%",
+              opacity: generating ? 0.7 : 1
+            }}
           >
             <Sparkles size={16} />
             {generating ? "Generating with Gemini AI..." : "Generate with Gemini AI"}
@@ -468,32 +595,146 @@ ${registrationScript}
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          {/* MAIN WEBSITE */}
           <h3><Type size={18} /> Main Website</h3>
 
           <label style={labelStyle}>Website Name</label>
-          <input style={fieldStyle} value={siteName} onChange={(e) => setSiteName(e.target.value)} />
+          <input style={fieldStyle} value={siteName} onChange={e => setSiteName(e.target.value)} />
 
           <label style={labelStyle}>Main Heading</label>
-          <textarea style={fieldStyle} rows={2} value={heading} onChange={(e) => setHeading(e.target.value)} />
+          <textarea style={fieldStyle} rows={2} value={heading} onChange={e => setHeading(e.target.value)} />
 
           <label style={labelStyle}>Description</label>
-          <textarea style={fieldStyle} rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+          <textarea style={fieldStyle} rows={3} value={description} onChange={e => setDescription(e.target.value)} />
 
           <label style={labelStyle}>Button Text</label>
-          <input style={fieldStyle} value={buttonText} onChange={(e) => setButtonText(e.target.value)} />
+          <input style={fieldStyle} value={buttonText} onChange={e => setButtonText(e.target.value)} />
 
+          {/* COLORS */}
           <h3><Palette size={18} /> Colors</h3>
+
           <label style={labelStyle}>Background Color</label>
-          <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ ...fieldStyle, height: "45px", padding: "4px" }} />
+          <input
+            type="color"
+            value={bgColor}
+            onChange={e => setBgColor(e.target.value)}
+            style={{ ...fieldStyle, height: "45px", padding: "4px" }}
+          />
 
           <label style={labelStyle}>Accent Color</label>
-          <input type="color" value={accent} onChange={(e) => setAccent(e.target.value)} style={{ ...fieldStyle, height: "45px", padding: "4px" }} />
+          <input
+            type="color"
+            value={accent}
+            onChange={e => setAccent(e.target.value)}
+            style={{ ...fieldStyle, height: "45px", padding: "4px" }}
+          />
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          {/* NEXUS GAMING HERO BACKGROUND */}
+          <h3><Gamepad2 size={18} /> Nexus Gaming Hero Background</h3>
+
+          <p style={{
+            color: "#9ca3af",
+            fontSize: "12px",
+            lineHeight: 1.6
+          }}>
+            Add an esports gaming background image to your main hero section.
+          </p>
+
+          <label style={labelStyle}>Upload Gaming Background</label>
+
+          <label style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "9px",
+            width: "100%",
+            padding: "14px",
+            marginTop: "9px",
+            marginBottom: "14px",
+            borderRadius: "9px",
+            border: "1px dashed #8b5cf6",
+            background: "#211b3b",
+            color: "white",
+            cursor: "pointer"
+          }}>
+            <Upload size={18} /> Choose Gaming Image
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleHeroBackgroundUpload}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          <label style={labelStyle}>Or Enter Gaming Image URL</label>
+
+          <input
+            style={fieldStyle}
+            value={heroBackgroundImage.startsWith("data:") ? "" : heroBackgroundImage}
+            onChange={e => setHeroBackgroundImage(e.target.value)}
+            placeholder="https://example.com/gaming.jpg"
+          />
+
+          <label style={labelStyle}>
+            Dark Overlay: {Math.round(heroOverlay * 100)}%
+          </label>
+
+          <input
+            type="range"
+            min="0"
+            max="0.95"
+            step="0.05"
+            value={heroOverlay}
+            onChange={e => setHeroOverlay(Number(e.target.value))}
+            style={{ width: "100%", margin: "12px 0 18px" }}
+          />
+
+          {heroBackgroundImage && (
+            <div style={{
+              background: "#0e1425",
+              padding: "10px",
+              borderRadius: "10px",
+              marginBottom: "15px"
+            }}>
+              <img
+                src={heroBackgroundImage}
+                alt="Gaming Hero Background"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: "150px",
+                  objectFit: "cover",
+                  borderRadius: "8px"
+                }}
+              />
+
+              <button
+                onClick={() => {
+                  setHeroBackgroundImage("");
+                  setNotice("Gaming background removed.");
+                }}
+                style={{
+                  ...buttonStyle,
+                  background: "#991b1b",
+                  marginTop: "10px",
+                  width: "100%"
+                }}
+              >
+                <Trash2 size={15} /> Remove Gaming Background
+              </button>
+            </div>
+          )}
+
+          <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
+
+          {/* NORMAL IMAGE SECTION */}
           <h3><ImageIcon size={18} /> Image Section</h3>
 
           <label style={labelStyle}>Upload Image From Phone</label>
+
           <label style={{
             display: "flex",
             alignItems: "center",
@@ -510,6 +751,7 @@ ${registrationScript}
             cursor: "pointer"
           }}>
             <Upload size={18} /> Choose Image
+
             <input
               type="file"
               accept="image/*"
@@ -519,10 +761,11 @@ ${registrationScript}
           </label>
 
           <label style={labelStyle}>Or Enter Image URL</label>
+
           <input
             style={fieldStyle}
             value={imageUrl}
-            onChange={(e) => {
+            onChange={e => {
               setImageUrl(e.target.value);
               setUploadedImage("");
             }}
@@ -547,6 +790,7 @@ ${registrationScript}
                   borderRadius: "8px"
                 }}
               />
+
               <button
                 onClick={() => {
                   setUploadedImage("");
@@ -567,7 +811,9 @@ ${registrationScript}
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          {/* FEATURE CARDS */}
           <h3><Layers size={18} /> Feature Cards</h3>
+
           {features.map((feature, index) => (
             <div key={index} style={{
               background: "#0e1425",
@@ -576,18 +822,22 @@ ${registrationScript}
               marginBottom: "12px"
             }}>
               <label style={labelStyle}>Card {index + 1} Title</label>
+
               <input
                 style={fieldStyle}
                 value={feature.title}
-                onChange={(e) => updateFeature(index, "title", e.target.value)}
+                onChange={e => updateFeature(index, "title", e.target.value)}
               />
+
               <label style={labelStyle}>Card Description</label>
+
               <textarea
                 style={fieldStyle}
                 rows={2}
                 value={feature.text}
-                onChange={(e) => updateFeature(index, "text", e.target.value)}
+                onChange={e => updateFeature(index, "text", e.target.value)}
               />
+
               <button
                 onClick={() => removeFeature(index)}
                 style={{
@@ -600,13 +850,16 @@ ${registrationScript}
               </button>
             </div>
           ))}
+
           <button onClick={addFeature} style={{ ...buttonStyle, width: "100%" }}>
             <Plus size={16} /> Add Feature Card
           </button>
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          {/* REGISTRATION */}
           <h3>🏆 Tournament Registration</h3>
+
           <label style={{
             display: "flex",
             alignItems: "center",
@@ -619,24 +872,38 @@ ${registrationScript}
             <input
               type="checkbox"
               checked={showRegistration}
-              onChange={(e) => setShowRegistration(e.target.checked)}
+              onChange={e => setShowRegistration(e.target.checked)}
               style={{ width: "18px", height: "18px" }}
             />
             <span>Enable Tournament Registration Form</span>
           </label>
+
           <p style={{ color: "#9ca3af", fontSize: "12px", lineHeight: 1.6 }}>
-            When enabled, visitors can submit their details. The form sends data to your Cloudflare registration API.
+            Visitors can submit their details through the Cloudflare registration API.
           </p>
 
           <hr style={{ borderColor: "#374151", margin: "22px 0" }} />
 
+          {/* ABOUT */}
           <h3><Layout size={18} /> About Section</h3>
+
           <label style={labelStyle}>About Heading</label>
-          <input style={fieldStyle} value={aboutHeading} onChange={(e) => setAboutHeading(e.target.value)} />
+          <input
+            style={fieldStyle}
+            value={aboutHeading}
+            onChange={e => setAboutHeading(e.target.value)}
+          />
+
           <label style={labelStyle}>About Description</label>
-          <textarea style={fieldStyle} rows={4} value={aboutText} onChange={(e) => setAboutText(e.target.value)} />
+          <textarea
+            style={fieldStyle}
+            rows={4}
+            value={aboutText}
+            onChange={e => setAboutText(e.target.value)}
+          />
         </section>
 
+        {/* RIGHT LIVE PREVIEW */}
         <section style={{
           background: "#151b2e",
           padding: "15px",
@@ -644,6 +911,7 @@ ${registrationScript}
           border: "1px solid #293149",
           minWidth: 0
         }}>
+
           <div style={{
             display: "flex",
             justifyContent: "space-between",
@@ -653,23 +921,31 @@ ${registrationScript}
             marginBottom: "15px"
           }}>
             <strong><Eye size={17} /> Live Website Preview</strong>
+
             <div style={{ display: "flex", gap: "8px" }}>
-              <button onClick={() => setMobile(false)} style={{
-                padding: "8px",
-                borderRadius: "7px",
-                border: "1px solid #475569",
-                background: mobile ? "#111827" : "#7c3aed",
-                color: "white"
-              }}>
+              <button
+                onClick={() => setMobile(false)}
+                style={{
+                  padding: "8px",
+                  borderRadius: "7px",
+                  border: "1px solid #475569",
+                  background: mobile ? "#111827" : "#7c3aed",
+                  color: "white"
+                }}
+              >
                 <Monitor size={17} />
               </button>
-              <button onClick={() => setMobile(true)} style={{
-                padding: "8px",
-                borderRadius: "7px",
-                border: "1px solid #475569",
-                background: mobile ? "#7c3aed" : "#111827",
-                color: "white"
-              }}>
+
+              <button
+                onClick={() => setMobile(true)}
+                style={{
+                  padding: "8px",
+                  borderRadius: "7px",
+                  border: "1px solid #475569",
+                  background: mobile ? "#7c3aed" : "#111827",
+                  color: "white"
+                }}
+              >
                 <Smartphone size={17} />
               </button>
             </div>
@@ -685,6 +961,7 @@ ${registrationScript}
             overflow: "hidden",
             minWidth: 0
           }}>
+
             <div style={{
               width: mobile ? "375px" : "100%",
               maxWidth: "100%",
@@ -695,6 +972,8 @@ ${registrationScript}
               overflow: "hidden",
               boxSizing: "border-box"
             }}>
+
+              {/* PREVIEW NAVBAR */}
               <div style={{
                 padding: "18px 6%",
                 display: "flex",
@@ -705,36 +984,62 @@ ${registrationScript}
                 borderBottom: "1px solid #ffffff20"
               }}>
                 <strong><Globe size={17} /> {siteName}</strong>
+
                 <span style={{ fontSize: "12px", color: "#cbd5e1" }}>
                   Home　 Features　 {showRegistration ? "Register　" : ""}About
                 </span>
               </div>
 
+              {/* GAMING HERO PREVIEW */}
               <div style={{
-                minHeight: "330px",
+                minHeight: "400px",
                 padding: "55px 8%",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                textAlign: "center"
+                textAlign: "center",
+                backgroundImage: previewHeroBackground,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat"
               }}>
+
+                <div style={{
+                  color: "#c4b5fd",
+                  fontSize: "12px",
+                  letterSpacing: "4px",
+                  fontWeight: "bold",
+                  marginBottom: "18px"
+                }}>
+                  ⚡ NEXUS ESPORTS ⚡
+                </div>
+
                 <h1 style={{
                   width: "100%",
                   maxWidth: "900px",
-                  fontSize: mobile ? "clamp(30px,8vw,42px)" : "clamp(34px,4vw,58px)",
+                  fontSize: mobile
+                    ? "clamp(30px,8vw,42px)"
+                    : "clamp(34px,4vw,58px)",
                   lineHeight: 1.15,
                   overflowWrap: "anywhere",
-                  margin: "0 0 20px"
-                }}>{heading}</h1>
+                  margin: "0 0 20px",
+                  textShadow: "0 3px 15px #000"
+                }}>
+                  {heading}
+                </h1>
+
                 <p style={{
                   width: "100%",
                   maxWidth: "600px",
                   fontSize: "16px",
                   lineHeight: 1.7,
-                  color: "#d1d5db",
+                  color: "#e5e7eb",
                   margin: 0
-                }}>{description}</p>
+                }}>
+                  {description}
+                </p>
+
                 <button
                   onClick={() => {
                     if (showRegistration) {
@@ -756,9 +1061,12 @@ ${registrationScript}
                     fontWeight: "bold",
                     cursor: "pointer"
                   }}
-                >{buttonText}</button>
+                >
+                  {buttonText}
+                </button>
               </div>
 
+              {/* NORMAL IMAGE */}
               {activeImage && (
                 <div style={{ padding: "10px 18px" }}>
                   <img
@@ -775,8 +1083,10 @@ ${registrationScript}
                 </div>
               )}
 
+              {/* FEATURES */}
               <div style={{ padding: "25px 18px", textAlign: "center" }}>
                 <h2>Our Features</h2>
+
                 <div style={{
                   display: "grid",
                   gridTemplateColumns: mobile ? "1fr" : "repeat(3,minmax(0,1fr))",
@@ -791,12 +1101,19 @@ ${registrationScript}
                       textAlign: "left"
                     }}>
                       <h3 style={{ fontSize: "16px" }}>{item.title}</h3>
-                      <p style={{ color: "#cbd5e1", fontSize: "13px", lineHeight: 1.5 }}>{item.text}</p>
+                      <p style={{
+                        color: "#cbd5e1",
+                        fontSize: "13px",
+                        lineHeight: 1.5
+                      }}>
+                        {item.text}
+                      </p>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* REGISTRATION PREVIEW */}
               {showRegistration && (
                 <div id="preview-registration" style={{
                   padding: "25px 18px",
@@ -804,22 +1121,26 @@ ${registrationScript}
                   background: "#ffffff08"
                 }}>
                   <h2>Tournament Registration</h2>
+
                   <p style={{ color: "#cbd5e1", fontSize: "13px" }}>
                     Fill in your details to register.
                   </p>
 
-                  <form onSubmit={submitRegistration} style={{
-                    maxWidth: "440px",
-                    margin: "auto",
-                    textAlign: "left"
-                  }}>
+                  <form
+                    onSubmit={submitRegistration}
+                    style={{
+                      maxWidth: "440px",
+                      margin: "auto",
+                      textAlign: "left"
+                    }}
+                  >
                     <label style={labelStyle}>Player Name</label>
                     <input
                       style={fieldStyle}
                       required
                       maxLength={100}
                       value={registration.playerName}
-                      onChange={(e) => updateRegistration("playerName", e.target.value)}
+                      onChange={e => updateRegistration("playerName", e.target.value)}
                       placeholder="Enter your name"
                     />
 
@@ -830,7 +1151,7 @@ ${registrationScript}
                       required
                       maxLength={254}
                       value={registration.email}
-                      onChange={(e) => updateRegistration("email", e.target.value)}
+                      onChange={e => updateRegistration("email", e.target.value)}
                       placeholder="Enter your email"
                     />
 
@@ -840,7 +1161,7 @@ ${registrationScript}
                       required
                       maxLength={50}
                       value={registration.gamingUsername}
-                      onChange={(e) => updateRegistration("gamingUsername", e.target.value)}
+                      onChange={e => updateRegistration("gamingUsername", e.target.value)}
                       placeholder="Enter gaming username"
                     />
 
@@ -850,7 +1171,7 @@ ${registrationScript}
                       required
                       maxLength={80}
                       value={registration.gameName}
-                      onChange={(e) => updateRegistration("gameName", e.target.value)}
+                      onChange={e => updateRegistration("gameName", e.target.value)}
                       placeholder="Enter game name"
                     />
 
@@ -861,7 +1182,7 @@ ${registrationScript}
                       required
                       maxLength={20}
                       value={registration.mobileNumber}
-                      onChange={(e) => updateRegistration("mobileNumber", e.target.value)}
+                      onChange={e => updateRegistration("mobileNumber", e.target.value)}
                       placeholder="Enter mobile number"
                     />
 
@@ -876,30 +1197,49 @@ ${registrationScript}
                     >
                       {registering ? "Submitting..." : "Submit Registration"}
                     </button>
+
                     {registrationMessage && (
                       <p role="status" style={{
                         color: "#c4b5fd",
                         fontSize: "13px",
                         lineHeight: 1.6
-                      }}>{registrationMessage}</p>
+                      }}>
+                        {registrationMessage}
+                      </p>
                     )}
                   </form>
                 </div>
               )}
 
-              <div style={{ padding: "25px 18px", textAlign: "center", background: "#ffffff08" }}>
+              {/* ABOUT */}
+              <div style={{
+                padding: "25px 18px",
+                textAlign: "center",
+                background: "#ffffff08"
+              }}>
                 <h2>{aboutHeading}</h2>
-                <p style={{ color: "#cbd5e1", lineHeight: 1.7 }}>{aboutText}</p>
+                <p style={{ color: "#cbd5e1", lineHeight: 1.7 }}>
+                  {aboutText}
+                </p>
               </div>
 
-              <div style={{ padding: "20px", textAlign: "center", color: "#9ca3af", fontSize: "12px" }}>
+              <div style={{
+                padding: "20px",
+                textAlign: "center",
+                color: "#9ca3af",
+                fontSize: "12px"
+              }}>
                 © {new Date().getFullYear()} {siteName}
               </div>
             </div>
           </div>
 
           {notice && (
-            <p style={{ color: "#a5b4fc", fontSize: "13px", overflowWrap: "anywhere" }}>
+            <p style={{
+              color: "#a5b4fc",
+              fontSize: "13px",
+              overflowWrap: "anywhere"
+            }}>
               {notice}
             </p>
           )}
@@ -908,8 +1248,11 @@ ${registrationScript}
 
       <style>{`
         * { box-sizing: border-box; }
+
         @media(max-width:760px) {
-          .studio-grid { grid-template-columns: minmax(0,1fr) !important; }
+          .studio-grid {
+            grid-template-columns: minmax(0,1fr) !important;
+          }
         }
       `}</style>
     </div>
