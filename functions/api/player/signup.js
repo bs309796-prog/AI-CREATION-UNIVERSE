@@ -1,3 +1,4 @@
+
 import {
   json,
   createSalt,
@@ -9,7 +10,12 @@ import {
 export async function onRequestPost({ request, env }) {
   try {
     if (!env.DB) {
-      return json({ success: false, error: "Database unavailable." }, 500);
+      console.error("PLAYER_SIGNUP_ERROR: DB binding unavailable.");
+
+      return json({
+        success: false,
+        error: "Database unavailable."
+      }, 500);
     }
 
     const body = await request.json();
@@ -28,14 +34,24 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
-    if (displayName.length > 100 || email.length > 254 ||
-        gamingUsername.length > 50 || gameName.length > 80 ||
-        mobileNumber.length > 20) {
-      return json({ success: false, error: "Input is too long." }, 400);
+    if (
+      displayName.length > 100 ||
+      email.length > 254 ||
+      gamingUsername.length > 50 ||
+      gameName.length > 80 ||
+      mobileNumber.length > 20
+    ) {
+      return json({
+        success: false,
+        error: "Input is too long."
+      }, 400);
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return json({ success: false, error: "Invalid email address." }, 400);
+      return json({
+        success: false,
+        error: "Invalid email address."
+      }, 400);
     }
 
     if (password.length < 8 || password.length > 128) {
@@ -71,6 +87,10 @@ export async function onRequestPost({ request, env }) {
       SELECT * FROM players WHERE id = ?
     `).bind(playerId).first();
 
+    if (!player) {
+      throw new Error("Player record was not found after signup.");
+    }
+
     return json({
       success: true,
       message: "Account created successfully.",
@@ -78,7 +98,9 @@ export async function onRequestPost({ request, env }) {
     }, 201, cookie);
 
   } catch (error) {
-    if (String(error.message || "").toLowerCase().includes("unique")) {
+    console.error("PLAYER_SIGNUP_ERROR:", error);
+
+    if (String(error?.message || "").toLowerCase().includes("unique")) {
       return json({
         success: false,
         error: "This email is already registered."
