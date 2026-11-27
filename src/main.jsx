@@ -18,10 +18,12 @@ import {
   Crown,
   Monitor,
   Play,
-  ShieldCheck
+  ShieldCheck,
+  UserCircle
 } from "lucide-react";
 import WebsiteStudio from "./WebsiteStudio";
 import AdminDashboard from "./AdminDashboard";
+import PlayerAuth from "./PlayerAuth";
 import "./style.css";
 
 function App() {
@@ -35,6 +37,7 @@ function App() {
     { name: "App Studio", icon: Smartphone },
     { name: "My Projects", icon: FolderOpen },
     { name: "AI Assistant", icon: Sparkles },
+    { name: "Player Account", icon: UserCircle },
     { name: "Admin Dashboard", icon: ShieldCheck },
     { name: "Settings", icon: Settings }
   ];
@@ -133,6 +136,8 @@ function App() {
             <WebsiteStudio onBack={() => setActive("Overview")} />
           ) : active === "Admin Dashboard" ? (
             <AdminDashboard onBack={() => setActive("Overview")} />
+          ) : active === "Player Account" ? (
+            <PlayerAuth onBack={() => setActive("Overview")} />
           ) : active === "Overview" ? (
             <>
               <section className="welcome">
