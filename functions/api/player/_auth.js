@@ -1,6 +1,6 @@
 
 const SESSION_DAYS = 7;
-const PASSWORD_ITERATIONS = 210000;
+const PASSWORD_ITERATIONS = 100000;
 
 export function json(data, status = 200, headers = {}) {
   return Response.json(data, { status, headers });
