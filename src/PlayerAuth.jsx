@@ -3,7 +3,7 @@ import React from "react";
 import {
   UserCircle, LogIn, UserPlus, LogOut, RefreshCw,
   Trophy, Users, Gamepad2, Copy, CalendarDays,
-  ShieldCheck, ArrowRight, Plus, Swords
+  ShieldCheck, ArrowRight, Plus, Swords, Medal
 } from "lucide-react";
 
 export default function PlayerAuth({ onBack }) {
@@ -12,6 +12,7 @@ export default function PlayerAuth({ onBack }) {
   const [player, setPlayer] = React.useState(null);
   const [tournaments, setTournaments] = React.useState([]);
   const [teams, setTeams] = React.useState([]);
+  const [leaderboard, setLeaderboard] = React.useState([]);
   const [form, setForm] = React.useState({
     displayName: "",
     email: "",
@@ -42,18 +43,23 @@ export default function PlayerAuth({ onBack }) {
 
       if (!response.ok || !data.success) {
         setPlayer(null);
+        setLeaderboard([]);
         return;
       }
 
       setPlayer(data.player);
 
-      const [tournamentResponse, teamResponse] = await Promise.all([
-        fetch("/api/tournaments", { cache: "no-store" }),
-        fetch("/api/teams", {
-          credentials: "same-origin",
-          cache: "no-store"
-        })
-      ]);
+      const [tournamentResponse, teamResponse, leaderboardResponse] =
+        await Promise.all([
+          fetch("/api/tournaments", { cache: "no-store" }),
+          fetch("/api/teams", {
+            credentials: "same-origin",
+            cache: "no-store"
+          }),
+          fetch("/api/leaderboard", {
+            cache: "no-store"
+          }).catch(() => null)
+        ]);
 
       const tournamentData = await tournamentResponse.json();
       const teamData = await teamResponse.json();
@@ -64,6 +70,21 @@ export default function PlayerAuth({ onBack }) {
 
       if (teamData.success) {
         setTeams(teamData.teams || []);
+      }
+
+      if (leaderboardResponse && leaderboardResponse.ok) {
+        try {
+          const leaderboardData = await leaderboardResponse.json();
+          if (leaderboardData.success) {
+            setLeaderboard(leaderboardData.leaderboard || []);
+          } else {
+            setLeaderboard([]);
+          }
+        } catch {
+          setLeaderboard([]);
+        }
+      } else {
+        setLeaderboard([]);
       }
     } catch {
       setError("Dashboard load नहीं हो पाया। दोबारा कोशिश करें।");
@@ -139,7 +160,9 @@ export default function PlayerAuth({ onBack }) {
       setPlayer(null);
       setTeams([]);
       setTournaments([]);
+      setLeaderboard([]);
       setMode("login");
+      setTab("overview");
       setMessage("You have logged out.");
     } catch (err) {
       setError(err.message);
@@ -471,6 +494,7 @@ export default function PlayerAuth({ onBack }) {
           ["overview", "Overview"],
           ["tournaments", "Tournaments"],
           ["teams", "My Teams"],
+          ["leaderboard", "Leaderboard"],
           ["profile", "My Profile"]
         ].map(([value, label]) => (
           <button
@@ -478,6 +502,7 @@ export default function PlayerAuth({ onBack }) {
             style={buttonStyle(tab === value)}
             onClick={() => setTab(value)}
           >
+            {value === "leaderboard" && <Trophy size={16} />}
             {label}
           </button>
         ))}
@@ -707,6 +732,151 @@ export default function PlayerAuth({ onBack }) {
             </p>
           </div>
         </>
+      )}
+
+      {tab === "leaderboard" && (
+        <div style={styles.card}>
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "10px"
+          }}>
+            <div>
+              <h2><Trophy size={22} /> Global Leaderboard</h2>
+              <p style={styles.muted}>
+                Verified match results के आधार पर खिलाड़ियों की Ranking
+              </p>
+            </div>
+            <button
+              style={buttonStyle(false)}
+              onClick={loadDashboard}
+              disabled={loading}
+            >
+              <RefreshCw size={15} /> Refresh Ranking
+            </button>
+          </div>
+
+          {leaderboard.length > 0 ? (
+            <div style={{ marginTop: "16px" }}>
+              {leaderboard.map((entry, index) => {
+                const isCurrentPlayer =
+                  Number(player.id) === Number(entry.player_id);
+
+                return (
+                  <div
+                    key={entry.player_id}
+                    style={{
+                      background: isCurrentPlayer ? "#252044" : "#0e1425",
+                      border: isCurrentPlayer
+                        ? "1px solid #8b5cf6"
+                        : "1px solid #303951",
+                      borderRadius: "12px",
+                      padding: "15px",
+                      margin: "12px 0",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: "14px"
+                    }}
+                  >
+                    <div style={{
+                      minWidth: "42px",
+                      height: "42px",
+                      borderRadius: "50%",
+                      background: index === 0
+                        ? "#854d0e"
+                        : index === 1
+                          ? "#475569"
+                          : index === 2
+                            ? "#78350f"
+                            : "#26334d",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "bold",
+                      fontSize: "17px"
+                    }}>
+                      {index + 1}
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: "150px" }}>
+                      <strong style={{ fontSize: "16px" }}>
+                        {entry.display_name ||
+                          entry.gaming_username ||
+                          `Player ${entry.player_id}`}
+                      </strong>
+                      {isCurrentPlayer && (
+                        <span style={{
+                          color: "#c4b5fd",
+                          fontSize: "12px",
+                          marginLeft: "8px"
+                        }}>
+                          You
+                        </span>
+                      )}
+                      <p style={styles.muted}>
+                        {entry.gaming_username || "Gaming name not added"}
+                        {entry.game_name ? ` · ${entry.game_name}` : ""}
+                      </p>
+                    </div>
+
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(4,minmax(55px,1fr))",
+                      gap: "12px",
+                      flex: "2",
+                      minWidth: "230px",
+                      textAlign: "center"
+                    }}>
+                      <div>
+                        <strong style={{ color: "#c4b5fd" }}>
+                          {Number(entry.total_points || 0).toLocaleString("en-IN")}
+                        </strong>
+                        <p style={styles.muted}>Points</p>
+                      </div>
+                      <div>
+                        <strong>
+                          {Number(entry.total_kills || 0)}
+                        </strong>
+                        <p style={styles.muted}>Kills</p>
+                      </div>
+                      <div>
+                        <strong>
+                          {Number(entry.matches_played || 0)}
+                        </strong>
+                        <p style={styles.muted}>Matches</p>
+                      </div>
+                      <div>
+                        <strong style={{ color: "#4ade80" }}>
+                          {Number(entry.wins || 0)}
+                        </strong>
+                        <p style={styles.muted}>Wins</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{
+              textAlign: "center",
+              padding: "35px 15px",
+              background: "#0e1425",
+              borderRadius: "12px",
+              marginTop: "15px"
+            }}>
+              <Medal size={42} color="#c4b5fd" />
+              <h3>No Rankings Yet</h3>
+              <p style={styles.muted}>
+                अभी कोई Verified Match Result उपलब्ध नहीं है।
+                Match Results verify होने के बाद यहाँ खिलाड़ियों की
+                Ranking दिखाई देगी।
+              </p>
+            </div>
+          )}
+        </div>
       )}
 
       {tab === "profile" && (
