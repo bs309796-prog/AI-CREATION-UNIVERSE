@@ -3,7 +3,7 @@ import React from "react";
 import {
   ShieldCheck, Users, Clock, CheckCircle, XCircle,
   LogOut, RefreshCw, Lock, Trophy, Plus, Trash2,
-  CalendarDays, Gamepad2, IndianRupee, Settings
+  CalendarDays, Gamepad2, IndianRupee
 } from "lucide-react";
 
 export default function AdminDashboard({ onBack }) {
@@ -237,7 +237,7 @@ export default function AdminDashboard({ onBack }) {
     }
   }
 
-  async function updateRegistration(id, status) {
+  async function updateRegistration(id, status, source) {
     setError("");
     setMessage("");
 
@@ -245,7 +245,11 @@ export default function AdminDashboard({ onBack }) {
       const data = await api("/api/admin/registrations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status })
+        body: JSON.stringify({
+          id,
+          status,
+          source: source || "legacy"
+        })
       });
 
       setMessage(data.message || "Registration updated.");
@@ -326,6 +330,7 @@ export default function AdminDashboard({ onBack }) {
           >
             <RefreshCw size={16} /> Refresh
           </button>
+
           <button style={buttonStyle} onClick={logout}>
             <LogOut size={16} /> Logout
           </button>
@@ -529,18 +534,23 @@ export default function AdminDashboard({ onBack }) {
               }}
             >
               <h3>{t.title}</h3>
+
               <p style={muted}>
                 <Gamepad2 size={14} /> {t.game_name} · {t.game_mode}
               </p>
+
               <p style={muted}>{t.description}</p>
+
               <p style={muted}>
                 Entry Fee: {money(t.entry_fee_paise)} ·
                 Prize Pool: {money(t.prize_pool_paise)}
               </p>
+
               <p style={muted}>
                 Players: {t.registered_players || 0}
                 {t.max_participants ? ` / ${t.max_participants}` : ""}
               </p>
+
               <p style={muted}>
                 Starts: {t.starts_at || "Not announced"}
               </p>
@@ -603,23 +613,50 @@ export default function AdminDashboard({ onBack }) {
           <h2><Users size={22} /> Player Registrations</h2>
 
           {registrations.map(player => (
-            <article key={player.id} style={{
-              ...cardStyle,
-              background: "#0e1425"
-            }}>
-              <h3>{player.player_name}</h3>
-              <p style={muted}>Gaming ID: {player.gaming_username}</p>
-              <p style={muted}>Game: {player.game_name}</p>
-              <p style={muted}>Email: {player.email}</p>
-              <p style={muted}>Mobile: {player.mobile_number}</p>
+            <article
+              key={`${player.source || "legacy"}-${player.id}`}
+              style={{
+                ...cardStyle,
+                background: "#0e1425"
+              }}
+            >
+              <h3>{player.player_name || "Unnamed Player"}</h3>
+
+              <p style={muted}>
+                Tournament: {player.tournament_title || "Legacy Registration"}
+              </p>
+
+              <p style={muted}>
+                Gaming ID: {player.gaming_username || "Not provided"}
+              </p>
+
+              <p style={muted}>
+                Game: {player.game_name || "Not provided"}
+              </p>
+
+              <p style={muted}>
+                Email: {player.email || "Not provided"}
+              </p>
+
+              <p style={muted}>
+                Mobile: {player.mobile_number || "Not provided"}
+              </p>
+
               <p>
                 Status: <strong>{player.registration_status}</strong>
               </p>
-              <p style={muted}>Registered: {player.created_at}</p>
+
+              <p style={muted}>
+                Registered: {player.created_at || "Join time not recorded"}
+              </p>
 
               <button
                 style={buttonStyle}
-                onClick={() => updateRegistration(player.id, "approved")}
+                onClick={() => updateRegistration(
+                  player.id,
+                  "approved",
+                  player.source
+                )}
                 disabled={player.registration_status === "approved"}
               >
                 <CheckCircle size={15} /> Approve
@@ -627,7 +664,11 @@ export default function AdminDashboard({ onBack }) {
 
               <button
                 style={{ ...buttonStyle, background: "#991b1b" }}
-                onClick={() => updateRegistration(player.id, "rejected")}
+                onClick={() => updateRegistration(
+                  player.id,
+                  "rejected",
+                  player.source
+                )}
                 disabled={player.registration_status === "rejected"}
               >
                 <XCircle size={15} /> Reject
@@ -635,7 +676,11 @@ export default function AdminDashboard({ onBack }) {
 
               <button
                 style={{ ...buttonStyle, background: "#475569" }}
-                onClick={() => updateRegistration(player.id, "pending")}
+                onClick={() => updateRegistration(
+                  player.id,
+                  "pending",
+                  player.source
+                )}
                 disabled={player.registration_status === "pending"}
               >
                 Pending
