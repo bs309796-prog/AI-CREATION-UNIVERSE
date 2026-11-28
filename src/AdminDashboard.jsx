@@ -3,8 +3,9 @@ import React from "react";
 import {
   ShieldCheck, Users, Clock, CheckCircle, XCircle,
   LogOut, RefreshCw, Lock, Trophy, Plus, Trash2,
-  CalendarDays, Gamepad2, IndianRupee
+  CalendarDays, Gamepad2, IndianRupee, Swords
 } from "lucide-react";
+import AdminMatchManager from "./AdminMatchManager";
 
 export default function AdminDashboard({ onBack }) {
   const [password, setPassword] = React.useState("");
@@ -319,7 +320,7 @@ export default function AdminDashboard({ onBack }) {
         <div>
           <p style={muted}>NEXUS ESPORTS</p>
           <h1>Admin Control Panel</h1>
-          <p style={muted}>Manage tournaments and player registrations.</p>
+          <p style={muted}>Manage tournaments, matches and player registrations.</p>
         </div>
 
         <div>
@@ -399,6 +400,16 @@ export default function AdminDashboard({ onBack }) {
         <button
           style={{
             ...buttonStyle,
+            background: tab === "matches" ? "#7c3aed" : "#202a40"
+          }}
+          onClick={() => setTab("matches")}
+        >
+          <Swords size={16} /> Match Manager
+        </button>
+
+        <button
+          style={{
+            ...buttonStyle,
             background: tab === "registrations" ? "#7c3aed" : "#202a40"
           }}
           onClick={() => setTab("registrations")}
@@ -406,6 +417,8 @@ export default function AdminDashboard({ onBack }) {
           <Users size={16} /> Player Registrations
         </button>
       </div>
+
+      {tab === "matches" && <AdminMatchManager />}
 
       {tab === "create" && (
         <div style={cardStyle}>
