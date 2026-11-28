@@ -1,19 +1,27 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+/* ==========================================
+   AI CREATION UNIVERSE
+   COSMIC GAMING COMMAND CENTER
+   PREMIUM THEME
+========================================== */
+
 :root {
   font-family: 'Inter', sans-serif;
-  color: #f1f5f9;
-  background: #070914;
+  color: #f1f5ff;
+  background: #050713;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  --bg: #070914;
-  --surface: #101427;
-  --surface-light: #171d34;
-  --border: #252d49;
-  --purple: #8b5cf6;
-  --blue: #38bdf8;
+
+  --bg: #050713;
+  --surface: rgba(12, 15, 35, .90);
+  --surface-light: rgba(23, 27, 58, .94);
+  --border: rgba(130, 100, 255, .28);
+  --purple: #a855ff;
+  --blue: #00cfff;
   --text-muted: #9ba6bf;
+  --neon: #8b5cf6;
 }
 
 * {
@@ -24,18 +32,72 @@
 
 html {
   scroll-behavior: smooth;
+  background: #050713;
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
+  color: #f1f5ff;
+  position: relative;
   background:
-    radial-gradient(ellipse at 15% 0%, #38208024, transparent 35%),
-    radial-gradient(ellipse at 90% 30%, #07598518, transparent 35%),
-    var(--bg);
+    radial-gradient(ellipse at 50% -15%,
+      rgba(100, 43, 255, .28), transparent 45%),
+    radial-gradient(ellipse at 5% 40%,
+      rgba(0, 125, 255, .17), transparent 38%),
+    radial-gradient(ellipse at 95% 65%,
+      rgba(155, 35, 255, .16), transparent 36%),
+    radial-gradient(ellipse at 50% 110%,
+      rgba(0, 100, 190, .16), transparent 45%),
+    linear-gradient(145deg, #050713, #0b1028 50%, #050713);
+  background-attachment: fixed;
 }
 
-button, textarea, input, select {
+/* Cosmic star atmosphere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 8% 15%, #ffffffaa 50%, transparent 100%),
+    radial-gradient(1px 1px at 18% 65%, #7ddfffaa 50%, transparent 100%),
+    radial-gradient(2px 2px at 35% 25%, #c4a5ffaa 50%, transparent 100%),
+    radial-gradient(1px 1px at 48% 80%, #ffffff99 50%, transparent 100%),
+    radial-gradient(2px 2px at 65% 12%, #8a9fffff 50%, transparent 100%),
+    radial-gradient(1px 1px at 78% 48%, #ffffffaa 50%, transparent 100%),
+    radial-gradient(2px 2px at 92% 20%, #c084fcaa 50%, transparent 100%),
+    radial-gradient(1px 1px at 88% 85%, #67e8f9aa 50%, transparent 100%);
+  background-size: 320px 280px;
+  opacity: .65;
+}
+
+/* Futuristic grid atmosphere */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(107, 95, 255, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 255, .035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  background: transparent;
+}
+
+button,
+textarea,
+input,
+select {
   font: inherit;
 }
 
@@ -51,16 +113,34 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
+/* Main layout */
 .app-shell {
   display: flex;
   min-height: 100vh;
+  background: transparent;
 }
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+}
+
+/* ==========================================
+   SIDEBAR - GAMING CONTROL CENTER
+========================================== */
 
 .sidebar {
   width: 260px;
   min-height: 100vh;
-  background: rgba(12, 16, 32, .96);
-  border-right: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 50% 0%,
+      rgba(100, 50, 255, .14), transparent 38%),
+    linear-gradient(180deg,
+      rgba(7, 10, 28, .98),
+      rgba(5, 8, 22, .98));
+  border-right: 1px solid rgba(123, 91, 255, .30);
+  box-shadow: 12px 0 45px rgba(0, 0, 0, .35);
   padding: 26px 18px;
   display: flex;
   flex-direction: column;
@@ -69,6 +149,7 @@ select:focus-visible {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  backdrop-filter: blur(22px);
 }
 
 .brand {
@@ -86,8 +167,10 @@ select:focus-visible {
   place-items: center;
   border-radius: 14px;
   color: white;
-  background: linear-gradient(135deg, #625bff, #b34ff5);
-  box-shadow: 0 0 28px #8555ff45;
+  background: linear-gradient(135deg, #623cff, #bd35ff);
+  box-shadow:
+    0 0 20px rgba(133, 85, 255, .45),
+    0 0 40px rgba(0, 190, 255, .12);
 }
 
 .brand h2 {
@@ -97,14 +180,14 @@ select:focus-visible {
 }
 
 .brand span {
-  color: #b49aff;
+  color: #a98bff;
   font-size: 11px;
   letter-spacing: 3px;
 }
 
 .menu-label {
   font-size: 10px;
-  color: #77819b;
+  color: #7786b2;
   letter-spacing: 2px;
   font-weight: 800;
   padding: 0 12px;
@@ -124,25 +207,30 @@ select:focus-visible {
   padding: 13px 14px;
   border: 1px solid transparent;
   border-radius: 11px;
-  color: #a1a9bd;
+  color: #a1a9c7;
   background: transparent;
   text-align: left;
   font-size: 13px;
-  transition: .2s;
+  transition: .25s ease;
 }
 
 .nav-item:hover {
   color: white;
-  background: #191f35;
-  border-color: #303958;
+  background: rgba(92, 70, 190, .20);
+  border-color: rgba(128, 105, 255, .35);
   transform: translateX(3px);
 }
 
 .nav-item.active {
-  background: linear-gradient(100deg, #3930a9, #5542cb);
+  background:
+    linear-gradient(100deg,
+      rgba(105, 52, 235, .55),
+      rgba(0, 155, 255, .17));
   color: white;
-  border-color: #7567e5;
-  box-shadow: 0 5px 24px #5145cd35;
+  border-color: rgba(160, 115, 255, .65);
+  box-shadow:
+    0 0 18px rgba(120, 70, 255, .22),
+    inset 0 0 18px rgba(0, 190, 255, .07);
 }
 
 .sidebar-bottom {
@@ -151,13 +239,15 @@ select:focus-visible {
 
 .upgrade-card {
   padding: 18px;
-  border: 1px solid #55418c;
+  border: 1px solid rgba(151, 103, 255, .48);
   border-radius: 16px;
   background:
-    radial-gradient(circle at 100% 0%, #8055e940, transparent 50%),
-    linear-gradient(145deg, #211b43, #17152c);
+    radial-gradient(circle at 100% 0%,
+      rgba(146, 69, 255, .30), transparent 50%),
+    linear-gradient(145deg, #1c1740, #10152e);
   margin-bottom: 22px;
   color: #c4b5fd;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, .22);
 }
 
 .upgrade-card h3 {
@@ -180,7 +270,7 @@ select:focus-visible {
   align-items: center;
   border: 0;
   border-radius: 9px;
-  background: linear-gradient(100deg, #6254ce, #9357e9);
+  background: linear-gradient(100deg, #6839e9, #a23cf4);
   color: white;
   font-size: 11px;
   transition: .2s;
@@ -202,7 +292,7 @@ select:focus-visible {
 .avatar {
   width: 38px;
   height: 38px;
-  border: 0;
+  border: 1px solid rgba(164, 120, 255, .5);
   display: grid;
   place-items: center;
   border-radius: 12px;
@@ -227,20 +317,20 @@ select:focus-visible {
   margin-top: 4px;
 }
 
-.main-area {
-  flex: 1;
-  min-width: 0;
-}
+/* ==========================================
+   TOPBAR - COMMAND NAVIGATION
+========================================== */
 
 .topbar {
   height: 76px;
   padding: 0 38px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(130, 100, 255, .25);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(9, 12, 25, .78);
-  backdrop-filter: blur(18px);
+  background: rgba(7, 10, 28, .84);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -253,7 +343,7 @@ select:focus-visible {
 
 .breadcrumb span {
   margin: 0 9px;
-  color: #555f78;
+  color: #6972a0;
 }
 
 .top-actions {
@@ -267,12 +357,12 @@ select:focus-visible {
   align-items: center;
   gap: 7px;
   color: #c4b5fd;
-  background: #211b43;
-  border: 1px solid #55418c;
+  background: rgba(84, 47, 170, .22);
+  border: 1px solid rgba(139, 92, 246, .40);
   padding: 9px 13px;
   border-radius: 20px;
   font-size: 11px;
-  box-shadow: 0 0 20px #8b5cf618;
+  box-shadow: 0 0 20px rgba(139, 92, 246, .10);
 }
 
 .avatar.small {
@@ -283,6 +373,10 @@ select:focus-visible {
 .mobile-brand {
   display: none;
 }
+
+/* ==========================================
+   MAIN CONTENT
+========================================== */
 
 .content {
   max-width: 1500px;
@@ -302,21 +396,46 @@ select:focus-visible {
   }
 }
 
+/* ==========================================
+   HERO - COSMIC GAMING BANNER
+========================================== */
+
 .welcome {
   min-height: 225px;
   padding: 38px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #51428d;
+  border: 1px solid rgba(145, 105, 255, .48);
   border-radius: 22px;
   overflow: hidden;
   position: relative;
+  isolation: isolate;
   background:
-    radial-gradient(circle at 80% 50%, #5541a355, transparent 35%),
-    radial-gradient(circle at 20% 100%, #07598525, transparent 40%),
-    linear-gradient(120deg, #17172e, #10182d);
-  box-shadow: 0 20px 70px #00000030;
+    radial-gradient(circle at 78% 48%,
+      rgba(120, 54, 255, .36), transparent 35%),
+    radial-gradient(circle at 15% 100%,
+      rgba(0, 190, 255, .20), transparent 42%),
+    linear-gradient(120deg,
+      #171333, #101b3b 55%, #171033);
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, .40),
+    0 0 35px rgba(125, 70, 255, .12);
+}
+
+.welcome::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 20% 25%, white 50%, transparent 100%),
+    radial-gradient(1px 1px at 40% 75%, #8deaff 50%, transparent 100%),
+    radial-gradient(2px 2px at 70% 20%, #c4a5ff 50%, transparent 100%),
+    radial-gradient(1px 1px at 90% 65%, white 50%, transparent 100%);
+  background-size: 180px 140px;
+  opacity: .55;
 }
 
 .welcome::after {
@@ -326,9 +445,12 @@ select:focus-visible {
   height: 300px;
   right: -130px;
   top: -160px;
-  border: 1px solid #a78bfa30;
+  border: 1px solid rgba(167, 139, 250, .40);
   border-radius: 50%;
-  box-shadow: 0 0 0 30px #a78bfa08, 0 0 0 65px #a78bfa06;
+  box-shadow:
+    0 0 0 30px rgba(167, 139, 250, .06),
+    0 0 0 65px rgba(167, 139, 250, .04),
+    0 0 0 100px rgba(0, 200, 255, .025);
   pointer-events: none;
 }
 
@@ -336,7 +458,7 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #b7a9ff;
+  color: #73e5ff;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 2px;
@@ -352,7 +474,7 @@ select:focus-visible {
 
 .welcome h1 span {
   color: #a78bfa;
-  background: linear-gradient(90deg, #a78bfa, #60c8ff);
+  background: linear-gradient(90deg, #c084fc, #54d8ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -371,22 +493,32 @@ select:focus-visible {
   display: grid;
   place-items: center;
   color: #c4b5fd;
-  border: 1px solid #a78bfa55;
+  border: 1px solid rgba(0, 217, 255, .50);
   border-radius: 35px;
-  background: linear-gradient(135deg, #6755d855, #a855f733);
-  box-shadow: 0 0 60px #8b5cf625;
+  background: linear-gradient(135deg,
+    rgba(103, 85, 216, .38),
+    rgba(0, 190, 255, .15));
+  box-shadow:
+    0 0 35px rgba(0, 190, 255, .15),
+    0 0 60px rgba(139, 92, 246, .20);
   transform: rotate(-8deg);
 }
+
+/* ==========================================
+   PROMPT PANEL
+========================================== */
 
 .prompt-box {
   margin-top: 30px;
   padding: 25px;
   border-radius: 17px;
-  border: 1px solid #45406c;
+  border: 1px solid rgba(115, 105, 210, .38);
   background:
-    radial-gradient(circle at 100% 0%, #5141a51a, transparent 45%),
-    #111629;
-  box-shadow: 0 12px 40px #00000022;
+    radial-gradient(circle at 100% 0%,
+      rgba(91, 65, 190, .20), transparent 45%),
+    linear-gradient(145deg, #151932, #0b1228);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
+  backdrop-filter: blur(16px);
 }
 
 .prompt-heading {
@@ -404,10 +536,10 @@ select:focus-visible {
   margin: 18px 0;
   padding: 16px;
   resize: vertical;
-  border: 1px solid #303951;
+  border: 1px solid rgba(100, 125, 190, .35);
   border-radius: 11px;
   outline: none;
-  background: #0b1020;
+  background: rgba(5, 10, 27, .90);
   color: white;
   font-size: 13px;
   line-height: 1.7;
@@ -416,7 +548,7 @@ select:focus-visible {
 
 .prompt-box textarea:focus {
   border-color: #8172ee;
-  box-shadow: 0 0 0 3px #8172ee1c;
+  box-shadow: 0 0 0 3px rgba(129, 114, 238, .14);
 }
 
 .prompt-box textarea::placeholder {
@@ -440,14 +572,16 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 9px;
-  border: 0;
+  border: 1px solid rgba(175, 135, 255, .38);
   padding: 13px 19px;
   border-radius: 10px;
   color: white;
   font-weight: 700;
   font-size: 11px;
-  background: linear-gradient(100deg, #6255d9, #8b5cf6);
-  box-shadow: 0 7px 22px #7555e638;
+  background: linear-gradient(105deg, #6335df, #176ebd);
+  box-shadow:
+    0 7px 22px rgba(117, 85, 230, .32),
+    0 0 15px rgba(0, 190, 255, .08);
   transition: .2s;
 }
 
@@ -461,6 +595,10 @@ select:focus-visible {
   opacity: .5;
   cursor: not-allowed;
 }
+
+/* ==========================================
+   SECTIONS AND STUDIO CARDS
+========================================== */
 
 .section-heading {
   margin: 40px 0 19px;
@@ -486,12 +624,18 @@ select:focus-visible {
 
 .studio-card {
   padding: 24px;
-  border: 1px solid #292f47;
+  border: 1px solid rgba(106, 113, 190, .30);
   border-radius: 17px;
-  background: linear-gradient(145deg, #141a30, #101427);
+  background:
+    radial-gradient(circle at 100% 0%,
+      rgba(117, 72, 220, .14), transparent 45%),
+    linear-gradient(145deg,
+      rgba(23, 27, 57, .96),
+      rgba(10, 15, 34, .97));
   transition: .25s;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, .22);
 }
 
 .studio-card::before {
@@ -501,15 +645,23 @@ select:focus-visible {
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #8b5cf6, #38bdf8, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #8b5cf6,
+    #00d9ff,
+    transparent
+  );
   opacity: 0;
   transition: .25s;
 }
 
 .studio-card:hover {
   transform: translateY(-5px);
-  border-color: #7565dc;
-  box-shadow: 0 16px 35px #00000035;
+  border-color: rgba(117, 139, 255, .65);
+  box-shadow:
+    0 16px 35px rgba(0, 0, 0, .35),
+    0 0 25px rgba(104, 70, 255, .12);
 }
 
 .studio-card:hover::before {
@@ -526,21 +678,21 @@ select:focus-visible {
 }
 
 .studio-icon.blue {
-  background: #183a63;
-  color: #60a5fa;
-  box-shadow: 0 0 22px #3b82f625;
+  background: rgba(24, 90, 145, .38);
+  color: #60d5ff;
+  box-shadow: 0 0 22px rgba(59, 130, 246, .20);
 }
 
 .studio-icon.purple {
-  background: #35235d;
+  background: rgba(92, 48, 145, .38);
   color: #c084fc;
-  box-shadow: 0 0 22px #a855f725;
+  box-shadow: 0 0 22px rgba(168, 85, 247, .20);
 }
 
 .studio-icon.green {
-  background: #143d37;
-  color: #4ade80;
-  box-shadow: 0 0 22px #4ade8020;
+  background: rgba(20, 100, 90, .30);
+  color: #4adeaa;
+  box-shadow: 0 0 22px rgba(74, 222, 128, .15);
 }
 
 .studio-card h3 {
@@ -558,7 +710,7 @@ select:focus-visible {
 .studio-card button {
   margin-top: 20px;
   border: 0;
-  color: #b7a8ff;
+  color: #9bceff;
   background: transparent;
   display: flex;
   align-items: center;
@@ -573,6 +725,10 @@ select:focus-visible {
   gap: 13px;
 }
 
+/* ==========================================
+   BOTTOM DASHBOARD PANELS
+========================================== */
+
 .bottom-grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -581,10 +737,14 @@ select:focus-visible {
 }
 
 .panel {
-  border: 1px solid #292f47;
+  border: 1px solid rgba(106, 113, 190, .30);
   border-radius: 17px;
   padding: 23px;
-  background: #111629;
+  background:
+    radial-gradient(circle at 100% 0%,
+      rgba(75, 75, 185, .13), transparent 45%),
+    linear-gradient(145deg, #141a36, #0b1228);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, .23);
 }
 
 .panel-heading {
@@ -632,14 +792,14 @@ select:focus-visible {
   color: #c8d0e1;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #252d42;
+  border-bottom: 1px solid rgba(100, 110, 160, .22);
   text-align: left;
   font-size: 12px;
   transition: .2s;
 }
 
 .quick-panel button:hover {
-  color: #bba8ff;
+  color: #83dcff;
   padding-left: 7px;
 }
 
@@ -647,6 +807,10 @@ select:focus-visible {
   margin-left: auto;
   width: 16px;
 }
+
+/* ==========================================
+   WORKSPACE AND ADMIN PAGES
+========================================== */
 
 .workspace-page {
   min-height: 65vh;
@@ -666,7 +830,7 @@ select:focus-visible {
 .workspace-placeholder {
   min-height: 350px;
   margin-top: 30px;
-  border: 1px dashed #62558e;
+  border: 1px dashed rgba(139, 92, 246, .55);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -674,11 +838,13 @@ select:focus-visible {
   flex-direction: column;
   gap: 17px;
   background:
-    radial-gradient(circle at 50% 0%, #5541a522, transparent 60%),
-    #111629;
+    radial-gradient(circle at 50% 0%,
+      rgba(85, 70, 210, .25), transparent 60%),
+    linear-gradient(145deg, #131a38, #080e22);
   color: #a78bfa;
   text-align: center;
   padding: 25px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, .25);
 }
 
 .workspace-placeholder h2 {
@@ -701,6 +867,39 @@ footer {
   padding-bottom: 12px;
 }
 
+/* ==========================================
+   GENERAL FORM AND ADMIN ELEMENTS
+========================================== */
+
+input,
+textarea,
+select {
+  color: #f1f5ff;
+  background-color: rgba(7, 11, 29, .94);
+  border-color: rgba(115, 110, 195, .35);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #78839f;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #8b75ff;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, .13);
+}
+
+option {
+  background: #10152d;
+  color: #f1f5ff;
+}
+
+/* ==========================================
+   RESPONSIVE TABLETS
+========================================== */
+
 @media (max-width: 1000px) {
   .sidebar {
     width: 220px;
@@ -715,7 +914,15 @@ footer {
   }
 }
 
+/* ==========================================
+   RESPONSIVE MOBILE
+========================================== */
+
 @media (max-width: 700px) {
+  body {
+    background-attachment: scroll;
+  }
+
   .sidebar {
     display: none;
   }
@@ -723,6 +930,7 @@ footer {
   .topbar {
     height: 65px;
     padding: 0 16px;
+    background: rgba(7, 10, 27, .95);
   }
 
   .mobile-brand {
@@ -817,6 +1025,7 @@ footer {
   }
 }
 
+/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -824,186 +1033,5 @@ footer {
     scroll-behavior: auto !important;
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
-  }
-}
-
-/* =========================================
-   AI CREATION UNIVERSE
-   PREMIUM GLOBAL BACKGROUND THEME
-========================================= */
-
-:root {
-  --bg: #080b1a;
-  --surface: rgba(17, 23, 48, 0.82);
-  --surface-light: rgba(30, 37, 70, 0.78);
-  --border: rgba(139, 124, 255, 0.22);
-  --purple: #9b7bff;
-  --blue: #42c9ff;
-}
-
-/* Main premium background */
-html {
-  background: #080b1a;
-}
-
-body {
-  min-height: 100vh;
-  color: #f4f5ff;
-  background:
-    radial-gradient(
-      ellipse at 12% 8%,
-      rgba(112, 65, 255, 0.22),
-      transparent 38%
-    ),
-    radial-gradient(
-      ellipse at 88% 18%,
-      rgba(0, 173, 255, 0.16),
-      transparent 35%
-    ),
-    radial-gradient(
-      ellipse at 50% 95%,
-      rgba(111, 48, 220, 0.15),
-      transparent 42%
-    ),
-    linear-gradient(135deg, #080b1a, #0d1228 48%, #090d20);
-  background-attachment: fixed;
-  position: relative;
-}
-
-/* Ambient background glow */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      circle at 25% 35%,
-      rgba(112, 75, 255, 0.09),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 78% 72%,
-      rgba(30, 180, 255, 0.07),
-      transparent 30%
-    );
-}
-
-/* Keep application above background */
-#root {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  background: transparent;
-}
-
-.app-shell,
-.main-area {
-  background: transparent !important;
-}
-
-/* Premium sidebar */
-.sidebar {
-  background: rgba(10, 15, 34, 0.88) !important;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  border-right: 1px solid rgba(143, 125, 255, 0.2);
-  box-shadow: 12px 0 45px rgba(0, 0, 0, 0.18);
-}
-
-/* Premium top navigation */
-.topbar {
-  background: rgba(10, 14, 32, 0.78) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(143, 125, 255, 0.2);
-}
-
-/* Premium cards */
-.studio-card,
-.panel,
-.prompt-box {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(27, 34, 68, 0.88),
-      rgba(13, 19, 42, 0.92)
-    ) !important;
-  border: 1px solid rgba(139, 124, 255, 0.22);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.20),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Premium welcome section */
-.welcome {
-  background:
-    radial-gradient(
-      circle at 85% 20%,
-      rgba(139, 92, 246, 0.30),
-      transparent 38%
-    ),
-    radial-gradient(
-      circle at 15% 100%,
-      rgba(14, 165, 233, 0.18),
-      transparent 42%
-    ),
-    linear-gradient(120deg, #171936, #101a36 55%, #171333) !important;
-  border-color: rgba(167, 139, 250, 0.38);
-  box-shadow:
-    0 20px 65px rgba(0, 0, 0, 0.28),
-    0 0 35px rgba(124, 88, 255, 0.08);
-}
-
-/* Premium workspace area */
-.workspace-placeholder {
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(139, 92, 246, 0.18),
-      transparent 55%
-    ),
-    linear-gradient(145deg, #151a37, #0d142b) !important;
-  border-color: rgba(155, 123, 255, 0.45);
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.20);
-}
-
-/* Better input surfaces */
-input,
-textarea,
-select {
-  background-color: rgba(8, 14, 32, 0.88);
-  border-color: rgba(139, 124, 255, 0.25);
-}
-
-/* Smooth premium hover */
-.studio-card,
-.panel,
-.nav-item,
-.upgrade-card {
-  transition:
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-}
-
-.studio-card:hover,
-.panel:hover {
-  border-color: rgba(139, 124, 255, 0.48);
-  box-shadow: 0 18px 48px rgba(69, 55, 160, 0.16);
-}
-
-/* Mobile background support */
-@media (max-width: 700px) {
-  body {
-    background-attachment: scroll;
-  }
-
-  .topbar {
-    background: rgba(10, 14, 32, 0.92) !important;
   }
 }
