@@ -6,6 +6,7 @@ import {
   CalendarDays, Gamepad2, IndianRupee, Swords
 } from "lucide-react";
 import AdminMatchManager from "./AdminMatchManager";
+import AdminResultsManager from "./AdminResultsManager";
 
 export default function AdminDashboard({ onBack }) {
   const [password, setPassword] = React.useState("");
@@ -146,6 +147,7 @@ export default function AdminDashboard({ onBack }) {
       setLoggedIn(false);
       setTournaments([]);
       setRegistrations([]);
+      setTab("tournaments");
       setMessage("");
       setError("");
     }
@@ -410,6 +412,16 @@ export default function AdminDashboard({ onBack }) {
         <button
           style={{
             ...buttonStyle,
+            background: tab === "results" ? "#7c3aed" : "#202a40"
+          }}
+          onClick={() => setTab("results")}
+        >
+          <Trophy size={16} /> Match Results
+        </button>
+
+        <button
+          style={{
+            ...buttonStyle,
             background: tab === "registrations" ? "#7c3aed" : "#202a40"
           }}
           onClick={() => setTab("registrations")}
@@ -419,6 +431,8 @@ export default function AdminDashboard({ onBack }) {
       </div>
 
       {tab === "matches" && <AdminMatchManager />}
+
+      {tab === "results" && <AdminResultsManager />}
 
       {tab === "create" && (
         <div style={cardStyle}>
