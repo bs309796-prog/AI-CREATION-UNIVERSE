@@ -8,6 +8,8 @@ import {
 } from "./_auth.js";
 
 export async function onRequestPost({ request, env }) {
+  let step = "START";
+
   try {
     if (!env.DB) {
       console.error("PLAYER_SIGNUP_ERROR: DB binding unavailable.");
@@ -18,6 +20,7 @@ export async function onRequestPost({ request, env }) {
       }, 500);
     }
 
+    step = "READ_REQUEST";
     const body = await request.json();
 
     const displayName = String(body.displayName || "").trim();
@@ -61,10 +64,12 @@ export async function onRequestPost({ request, env }) {
       }, 400);
     }
 
+    step = "CREATE_PASSWORD_HASH";
     const salt = createSalt();
     const passwordSalt = btoa(String.fromCharCode(...salt));
     const passwordHash = await hashPassword(password, salt);
 
+    step = "INSERT_PLAYER";
     const result = await env.DB.prepare(`
       INSERT INTO players
       (display_name, email, password_hash, password_salt,
@@ -81,8 +86,11 @@ export async function onRequestPost({ request, env }) {
     ).run();
 
     const playerId = result.meta.last_row_id;
+
+    step = "CREATE_SESSION";
     const cookie = await createSession(env.DB, playerId);
 
+    step = "FETCH_PLAYER";
     const player = await env.DB.prepare(`
       SELECT * FROM players WHERE id = ?
     `).bind(playerId).first();
@@ -91,6 +99,7 @@ export async function onRequestPost({ request, env }) {
       throw new Error("Player record was not found after signup.");
     }
 
+    step = "SUCCESS";
     return json({
       success: true,
       message: "Account created successfully.",
@@ -98,7 +107,11 @@ export async function onRequestPost({ request, env }) {
     }, 201, cookie);
 
   } catch (error) {
-    console.error("PLAYER_SIGNUP_ERROR:", error);
+    console.error("PLAYER_SIGNUP_ERROR:", {
+      step,
+      message: error?.message || "Unknown error",
+      stack: error?.stack || null
+    });
 
     if (String(error?.message || "").toLowerCase().includes("unique")) {
       return json({
@@ -109,7 +122,7 @@ export async function onRequestPost({ request, env }) {
 
     return json({
       success: false,
-      error: "Signup failed. Please try again."
+      error: `Signup failed at ${step}: ${String(error?.message || "Unknown error")}`
     }, 500);
   }
 }
