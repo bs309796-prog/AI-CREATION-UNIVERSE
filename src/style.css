@@ -1,27 +1,27 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ==========================================
-   AI CREATION UNIVERSE
-   COSMIC GAMING COMMAND CENTER
-   PREMIUM THEME
+   NEXUS ESPORTS
+   NEXT GEN GAMING TOURNAMENT THEME
 ========================================== */
 
 :root {
   font-family: 'Inter', sans-serif;
-  color: #f1f5ff;
-  background: #050713;
+  color: #f5f7fa;
+  background: #080b10;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 
-  --bg: #050713;
-  --surface: rgba(12, 15, 35, .90);
-  --surface-light: rgba(23, 27, 58, .94);
-  --border: rgba(130, 100, 255, .28);
-  --purple: #a855ff;
-  --blue: #00cfff;
-  --text-muted: #9ba6bf;
-  --neon: #8b5cf6;
+  --bg: #080b10;
+  --surface: #111720;
+  --surface-light: #18212c;
+  --border: rgba(255,255,255,.09);
+  --red: #ff3b30;
+  --orange: #ff7a18;
+  --cyan: #19d9ff;
+  --text-muted: #8995a5;
+  --neon: #ff4b36;
+  --green: #27d989;
 }
 
 * {
@@ -32,28 +32,23 @@
 
 html {
   scroll-behavior: smooth;
-  background: #050713;
+  background: var(--bg);
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
-  color: #f1f5ff;
+  color: #f5f7fa;
   position: relative;
   background:
-    radial-gradient(ellipse at 50% -15%,
-      rgba(100, 43, 255, .28), transparent 45%),
-    radial-gradient(ellipse at 5% 40%,
-      rgba(0, 125, 255, .17), transparent 38%),
-    radial-gradient(ellipse at 95% 65%,
-      rgba(155, 35, 255, .16), transparent 36%),
-    radial-gradient(ellipse at 50% 110%,
-      rgba(0, 100, 190, .16), transparent 45%),
-    linear-gradient(145deg, #050713, #0b1028 50%, #050713);
+    radial-gradient(ellipse at 85% 0%, rgba(255,59,48,.12), transparent 35%),
+    radial-gradient(ellipse at 0% 75%, rgba(25,217,255,.055), transparent 35%),
+    linear-gradient(145deg, #080b10, #0d121a 55%, #080b10);
   background-attachment: fixed;
 }
 
-/* Cosmic star atmosphere */
+/* Gaming grid atmosphere */
+
 body::before {
   content: "";
   position: fixed;
@@ -61,30 +56,21 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(2px 2px at 8% 15%, #ffffffaa 50%, transparent 100%),
-    radial-gradient(1px 1px at 18% 65%, #7ddfffaa 50%, transparent 100%),
-    radial-gradient(2px 2px at 35% 25%, #c4a5ffaa 50%, transparent 100%),
-    radial-gradient(1px 1px at 48% 80%, #ffffff99 50%, transparent 100%),
-    radial-gradient(2px 2px at 65% 12%, #8a9fffff 50%, transparent 100%),
-    radial-gradient(1px 1px at 78% 48%, #ffffffaa 50%, transparent 100%),
-    radial-gradient(2px 2px at 92% 20%, #c084fcaa 50%, transparent 100%),
-    radial-gradient(1px 1px at 88% 85%, #67e8f9aa 50%, transparent 100%);
-  background-size: 320px 280px;
-  opacity: .65;
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
 }
 
-/* Futuristic grid atmosphere */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(107, 95, 255, .035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 200, 255, .035) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255,70,45,.07), transparent 25%),
+    radial-gradient(circle at 90% 75%, rgba(25,217,255,.045), transparent 25%);
 }
 
 #root {
@@ -94,10 +80,7 @@ body::after {
   background: transparent;
 }
 
-button,
-textarea,
-input,
-select {
+button, textarea, input, select {
   font: inherit;
 }
 
@@ -109,11 +92,12 @@ button:focus-visible,
 textarea:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--cyan);
   outline-offset: 3px;
 }
 
 /* Main layout */
+
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -127,20 +111,16 @@ select:focus-visible {
 }
 
 /* ==========================================
-   SIDEBAR - GAMING CONTROL CENTER
+   SIDEBAR
 ========================================== */
 
 .sidebar {
   width: 260px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 50% 0%,
-      rgba(100, 50, 255, .14), transparent 38%),
-    linear-gradient(180deg,
-      rgba(7, 10, 28, .98),
-      rgba(5, 8, 22, .98));
-  border-right: 1px solid rgba(123, 91, 255, .30);
-  box-shadow: 12px 0 45px rgba(0, 0, 0, .35);
+    linear-gradient(180deg, #111720, #0b1017 70%, #090d13);
+  border-right: 1px solid rgba(255,255,255,.08);
+  box-shadow: 12px 0 40px rgba(0,0,0,.35);
   padding: 26px 18px;
   display: flex;
   flex-direction: column;
@@ -149,7 +129,7 @@ select:focus-visible {
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  backdrop-filter: blur(22px);
+  backdrop-filter: blur(20px);
 }
 
 .brand {
@@ -165,29 +145,27 @@ select:focus-visible {
   height: 44px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: 12px;
   color: white;
-  background: linear-gradient(135deg, #623cff, #bd35ff);
-  box-shadow:
-    0 0 20px rgba(133, 85, 255, .45),
-    0 0 40px rgba(0, 190, 255, .12);
+  background: linear-gradient(135deg, #ff3b30, #ff7918);
+  box-shadow: 0 0 22px rgba(255,65,45,.28);
 }
 
 .brand h2 {
   font-size: 15px;
   font-weight: 900;
-  letter-spacing: .5px;
+  letter-spacing: 1px;
 }
 
 .brand span {
-  color: #a98bff;
-  font-size: 11px;
+  color: #ff745d;
+  font-size: 10px;
   letter-spacing: 3px;
 }
 
 .menu-label {
   font-size: 10px;
-  color: #7786b2;
+  color: #718091;
   letter-spacing: 2px;
   font-weight: 800;
   padding: 0 12px;
@@ -206,31 +184,26 @@ select:focus-visible {
   gap: 13px;
   padding: 13px 14px;
   border: 1px solid transparent;
-  border-radius: 11px;
-  color: #a1a9c7;
+  border-radius: 9px;
+  color: #a5afbd;
   background: transparent;
   text-align: left;
   font-size: 13px;
-  transition: .25s ease;
+  transition: .22s ease;
 }
 
 .nav-item:hover {
   color: white;
-  background: rgba(92, 70, 190, .20);
-  border-color: rgba(128, 105, 255, .35);
+  background: rgba(255,255,255,.055);
+  border-color: rgba(255,255,255,.09);
   transform: translateX(3px);
 }
 
 .nav-item.active {
-  background:
-    linear-gradient(100deg,
-      rgba(105, 52, 235, .55),
-      rgba(0, 155, 255, .17));
   color: white;
-  border-color: rgba(160, 115, 255, .65);
-  box-shadow:
-    0 0 18px rgba(120, 70, 255, .22),
-    inset 0 0 18px rgba(0, 190, 255, .07);
+  background: linear-gradient(100deg, rgba(255,59,48,.22), rgba(255,122,24,.07));
+  border-color: rgba(255,75,54,.42);
+  box-shadow: inset 3px 0 0 var(--red), 0 5px 18px rgba(0,0,0,.18);
 }
 
 .sidebar-bottom {
@@ -239,15 +212,14 @@ select:focus-visible {
 
 .upgrade-card {
   padding: 18px;
-  border: 1px solid rgba(151, 103, 255, .48);
-  border-radius: 16px;
+  border: 1px solid rgba(255,95,55,.28);
+  border-radius: 13px;
   background:
-    radial-gradient(circle at 100% 0%,
-      rgba(146, 69, 255, .30), transparent 50%),
-    linear-gradient(145deg, #1c1740, #10152e);
+    radial-gradient(circle at 100% 0%, rgba(255,75,45,.17), transparent 55%),
+    linear-gradient(145deg, #1c2028, #111720);
   margin-bottom: 22px;
-  color: #c4b5fd;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, .22);
+  color: #ff9b79;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
 }
 
 .upgrade-card h3 {
@@ -259,7 +231,7 @@ select:focus-visible {
 .upgrade-card p {
   font-size: 11px;
   line-height: 1.6;
-  color: #a5a0bc;
+  color: #9aa5b3;
 }
 
 .upgrade-card button {
@@ -269,15 +241,16 @@ select:focus-visible {
   gap: 8px;
   align-items: center;
   border: 0;
-  border-radius: 9px;
-  background: linear-gradient(100deg, #6839e9, #a23cf4);
+  border-radius: 8px;
+  background: linear-gradient(100deg, #ff3b30, #ff7918);
   color: white;
   font-size: 11px;
+  font-weight: 800;
   transition: .2s;
 }
 
 .upgrade-card button:hover {
-  filter: brightness(1.2);
+  filter: brightness(1.15);
   transform: translateY(-2px);
 }
 
@@ -292,11 +265,11 @@ select:focus-visible {
 .avatar {
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(164, 120, 255, .5);
+  border: 1px solid rgba(255,100,70,.45);
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #536dfe, #a855f7);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff3b30, #a92720);
   color: white;
   font-size: 12px;
   font-weight: 800;
@@ -313,37 +286,37 @@ select:focus-visible {
 
 .user-profile span {
   font-size: 10px;
-  color: #858da5;
+  color: #8995a5;
   margin-top: 4px;
 }
 
 /* ==========================================
-   TOPBAR - COMMAND NAVIGATION
+   TOPBAR
 ========================================== */
 
 .topbar {
   height: 76px;
   padding: 0 38px;
-  border-bottom: 1px solid rgba(130, 100, 255, .25);
+  border-bottom: 1px solid rgba(255,255,255,.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(7, 10, 28, .84);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  background: rgba(13,18,26,.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
   z-index: 20;
 }
 
 .breadcrumb {
-  color: #9ba5bb;
+  color: #a0aab8;
   font-size: 12px;
 }
 
 .breadcrumb span {
   margin: 0 9px;
-  color: #6972a0;
+  color: #ff634c;
 }
 
 .top-actions {
@@ -356,13 +329,12 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #c4b5fd;
-  background: rgba(84, 47, 170, .22);
-  border: 1px solid rgba(139, 92, 246, .40);
+  color: #ffb18f;
+  background: rgba(255,75,48,.10);
+  border: 1px solid rgba(255,75,48,.28);
   padding: 9px 13px;
-  border-radius: 20px;
+  border-radius: 8px;
   font-size: 11px;
-  box-shadow: 0 0 20px rgba(139, 92, 246, .10);
 }
 
 .avatar.small {
@@ -382,7 +354,7 @@ select:focus-visible {
   max-width: 1500px;
   margin: auto;
   padding: 40px 38px;
-  animation: pageEnter .45s ease both;
+  animation: pageEnter .4s ease both;
 }
 
 @keyframes pageEnter {
@@ -397,7 +369,7 @@ select:focus-visible {
 }
 
 /* ==========================================
-   HERO - COSMIC GAMING BANNER
+   HERO BANNER
 ========================================== */
 
 .welcome {
@@ -406,21 +378,16 @@ select:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid rgba(145, 105, 255, .48);
-  border-radius: 22px;
+  border: 1px solid rgba(255,90,60,.28);
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(circle at 78% 48%,
-      rgba(120, 54, 255, .36), transparent 35%),
-    radial-gradient(circle at 15% 100%,
-      rgba(0, 190, 255, .20), transparent 42%),
-    linear-gradient(120deg,
-      #171333, #101b3b 55%, #171033);
-  box-shadow:
-    0 20px 70px rgba(0, 0, 0, .40),
-    0 0 35px rgba(125, 70, 255, .12);
+    linear-gradient(105deg, rgba(255,59,48,.15), transparent 55%),
+    radial-gradient(circle at 85% 45%, rgba(255,105,40,.18), transparent 35%),
+    linear-gradient(120deg, #1b2028, #111923 60%, #17191f);
+  box-shadow: 0 20px 55px rgba(0,0,0,.35);
 }
 
 .welcome::before {
@@ -429,28 +396,24 @@ select:focus-visible {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image:
-    radial-gradient(2px 2px at 20% 25%, white 50%, transparent 100%),
-    radial-gradient(1px 1px at 40% 75%, #8deaff 50%, transparent 100%),
-    radial-gradient(2px 2px at 70% 20%, #c4a5ff 50%, transparent 100%),
-    radial-gradient(1px 1px at 90% 65%, white 50%, transparent 100%);
-  background-size: 180px 140px;
-  opacity: .55;
+  background:
+    linear-gradient(125deg, transparent 55%, rgba(255,255,255,.035) 55.2%, transparent 70%),
+    repeating-linear-gradient(135deg, transparent 0 28px, rgba(255,255,255,.018) 29px 30px);
 }
 
 .welcome::after {
   content: "";
   position: absolute;
-  width: 300px;
-  height: 300px;
-  right: -130px;
-  top: -160px;
-  border: 1px solid rgba(167, 139, 250, .40);
+  width: 280px;
+  height: 280px;
+  right: -120px;
+  top: -150px;
+  border: 1px solid rgba(255,100,65,.35);
   border-radius: 50%;
   box-shadow:
-    0 0 0 30px rgba(167, 139, 250, .06),
-    0 0 0 65px rgba(167, 139, 250, .04),
-    0 0 0 100px rgba(0, 200, 255, .025);
+    0 0 0 30px rgba(255,100,65,.045),
+    0 0 0 65px rgba(255,100,65,.03),
+    0 0 0 100px rgba(255,100,65,.02);
   pointer-events: none;
 }
 
@@ -458,7 +421,7 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #73e5ff;
+  color: var(--cyan);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 2px;
@@ -473,15 +436,15 @@ select:focus-visible {
 }
 
 .welcome h1 span {
-  color: #a78bfa;
-  background: linear-gradient(90deg, #c084fc, #54d8ff);
+  color: #ff654d;
+  background: linear-gradient(90deg, #ff4b36, #ff9b38);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .welcome p {
-  color: #a5aec3;
+  color: #aab4c1;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -492,16 +455,12 @@ select:focus-visible {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  color: #c4b5fd;
-  border: 1px solid rgba(0, 217, 255, .50);
-  border-radius: 35px;
-  background: linear-gradient(135deg,
-    rgba(103, 85, 216, .38),
-    rgba(0, 190, 255, .15));
-  box-shadow:
-    0 0 35px rgba(0, 190, 255, .15),
-    0 0 60px rgba(139, 92, 246, .20);
-  transform: rotate(-8deg);
+  color: #ff765d;
+  border: 1px solid rgba(255,95,65,.45);
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(255,65,45,.18), rgba(255,145,45,.07));
+  box-shadow: 0 0 35px rgba(255,65,45,.12);
+  transform: rotate(-7deg);
 }
 
 /* ==========================================
@@ -511,21 +470,17 @@ select:focus-visible {
 .prompt-box {
   margin-top: 30px;
   padding: 25px;
-  border-radius: 17px;
-  border: 1px solid rgba(115, 105, 210, .38);
-  background:
-    radial-gradient(circle at 100% 0%,
-      rgba(91, 65, 190, .20), transparent 45%),
-    linear-gradient(145deg, #151932, #0b1228);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, .28);
-  backdrop-filter: blur(16px);
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: linear-gradient(145deg, #171e28, #10161f);
+  box-shadow: 0 12px 35px rgba(0,0,0,.25);
 }
 
 .prompt-heading {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #d9d1ff;
+  color: #f5f7fa;
   font-size: 14px;
   font-weight: 700;
 }
@@ -536,10 +491,10 @@ select:focus-visible {
   margin: 18px 0;
   padding: 16px;
   resize: vertical;
-  border: 1px solid rgba(100, 125, 190, .35);
-  border-radius: 11px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9px;
   outline: none;
-  background: rgba(5, 10, 27, .90);
+  background: #0b1119;
   color: white;
   font-size: 13px;
   line-height: 1.7;
@@ -547,12 +502,12 @@ select:focus-visible {
 }
 
 .prompt-box textarea:focus {
-  border-color: #8172ee;
-  box-shadow: 0 0 0 3px rgba(129, 114, 238, .14);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(255,59,48,.12);
 }
 
 .prompt-box textarea::placeholder {
-  color: #69738a;
+  color: #697586;
 }
 
 .prompt-footer {
@@ -564,7 +519,7 @@ select:focus-visible {
 
 .prompt-footer span {
   font-size: 11px;
-  color: #828ca4;
+  color: #8995a5;
 }
 
 .prompt-footer button,
@@ -572,23 +527,22 @@ select:focus-visible {
   display: flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid rgba(175, 135, 255, .38);
+  border: 1px solid rgba(255,110,75,.25);
   padding: 13px 19px;
-  border-radius: 10px;
+  border-radius: 8px;
   color: white;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 11px;
-  background: linear-gradient(105deg, #6335df, #176ebd);
-  box-shadow:
-    0 7px 22px rgba(117, 85, 230, .32),
-    0 0 15px rgba(0, 190, 255, .08);
+  background: linear-gradient(105deg, #ff3b30, #ff7918);
+  box-shadow: 0 7px 22px rgba(255,59,48,.18);
   transition: .2s;
 }
 
 .prompt-footer button:hover,
 .workspace-placeholder button:hover {
   transform: translateY(-2px);
-  filter: brightness(1.15);
+  filter: brightness(1.12);
+  box-shadow: 0 10px 28px rgba(255,59,48,.25);
 }
 
 .prompt-footer button:disabled {
@@ -597,7 +551,7 @@ select:focus-visible {
 }
 
 /* ==========================================
-   SECTIONS AND STUDIO CARDS
+   SECTIONS AND CARDS
 ========================================== */
 
 .section-heading {
@@ -612,7 +566,7 @@ select:focus-visible {
 
 .section-heading p {
   font-size: 11px;
-  color: #858fa8;
+  color: #8995a5;
   margin-top: 6px;
 }
 
@@ -624,18 +578,14 @@ select:focus-visible {
 
 .studio-card {
   padding: 24px;
-  border: 1px solid rgba(106, 113, 190, .30);
-  border-radius: 17px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 13px;
   background:
-    radial-gradient(circle at 100% 0%,
-      rgba(117, 72, 220, .14), transparent 45%),
-    linear-gradient(145deg,
-      rgba(23, 27, 57, .96),
-      rgba(10, 15, 34, .97));
+    linear-gradient(145deg, rgba(27,35,46,.98), rgba(15,21,30,.98));
   transition: .25s;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, .22);
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
 }
 
 .studio-card::before {
@@ -645,23 +595,15 @@ select:focus-visible {
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #8b5cf6,
-    #00d9ff,
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, #ff3b30, #ff9b35, transparent);
   opacity: 0;
   transition: .25s;
 }
 
 .studio-card:hover {
   transform: translateY(-5px);
-  border-color: rgba(117, 139, 255, .65);
-  box-shadow:
-    0 16px 35px rgba(0, 0, 0, .35),
-    0 0 25px rgba(104, 70, 255, .12);
+  border-color: rgba(255,90,60,.42);
+  box-shadow: 0 16px 35px rgba(0,0,0,.35), 0 0 20px rgba(255,59,48,.07);
 }
 
 .studio-card:hover::before {
@@ -671,28 +613,25 @@ select:focus-visible {
 .studio-icon {
   width: 50px;
   height: 50px;
-  border-radius: 14px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   margin-bottom: 20px;
 }
 
 .studio-icon.blue {
-  background: rgba(24, 90, 145, .38);
-  color: #60d5ff;
-  box-shadow: 0 0 22px rgba(59, 130, 246, .20);
+  background: rgba(25,160,220,.13);
+  color: #55d8ff;
 }
 
 .studio-icon.purple {
-  background: rgba(92, 48, 145, .38);
-  color: #c084fc;
-  box-shadow: 0 0 22px rgba(168, 85, 247, .20);
+  background: rgba(255,75,48,.13);
+  color: #ff8066;
 }
 
 .studio-icon.green {
-  background: rgba(20, 100, 90, .30);
+  background: rgba(39,217,137,.12);
   color: #4adeaa;
-  box-shadow: 0 0 22px rgba(74, 222, 128, .15);
 }
 
 .studio-card h3 {
@@ -702,7 +641,7 @@ select:focus-visible {
 
 .studio-card p {
   min-height: 42px;
-  color: #929cb3;
+  color: #9aa5b3;
   font-size: 11px;
   line-height: 1.8;
 }
@@ -710,7 +649,7 @@ select:focus-visible {
 .studio-card button {
   margin-top: 20px;
   border: 0;
-  color: #9bceff;
+  color: #ff846c;
   background: transparent;
   display: flex;
   align-items: center;
@@ -721,7 +660,7 @@ select:focus-visible {
 }
 
 .studio-card button:hover {
-  color: #fff;
+  color: white;
   gap: 13px;
 }
 
@@ -737,14 +676,11 @@ select:focus-visible {
 }
 
 .panel {
-  border: 1px solid rgba(106, 113, 190, .30);
-  border-radius: 17px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 13px;
   padding: 23px;
-  background:
-    radial-gradient(circle at 100% 0%,
-      rgba(75, 75, 185, .13), transparent 45%),
-    linear-gradient(145deg, #141a36, #0b1228);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, .23);
+  background: linear-gradient(145deg, #19212c, #101720);
+  box-shadow: 0 12px 30px rgba(0,0,0,.23);
 }
 
 .panel-heading {
@@ -754,7 +690,7 @@ select:focus-visible {
 }
 
 .panel-heading button {
-  color: #b5a4ff;
+  color: #ff846c;
   background: none;
   border: 0;
   font-size: 11px;
@@ -767,12 +703,12 @@ select:focus-visible {
   justify-content: center;
   flex-direction: column;
   gap: 11px;
-  color: #69758f;
+  color: #778496;
 }
 
 .empty-state strong {
   font-size: 13px;
-  color: #c4cce0;
+  color: #d5dbe3;
 }
 
 .empty-state span {
@@ -789,17 +725,17 @@ select:focus-visible {
   align-items: center;
   gap: 12px;
   padding: 15px 3px;
-  color: #c8d0e1;
+  color: #c8d0dc;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(100, 110, 160, .22);
+  border-bottom: 1px solid rgba(255,255,255,.07);
   text-align: left;
   font-size: 12px;
   transition: .2s;
 }
 
 .quick-panel button:hover {
-  color: #83dcff;
+  color: var(--cyan);
   padding-left: 7px;
 }
 
@@ -823,28 +759,27 @@ select:focus-visible {
 
 .workspace-description {
   margin-top: 10px;
-  color: #99a4bb;
+  color: #9aa5b3;
   font-size: 13px;
 }
 
 .workspace-placeholder {
   min-height: 350px;
   margin-top: 30px;
-  border: 1px dashed rgba(139, 92, 246, .55);
-  border-radius: 20px;
+  border: 1px dashed rgba(255,90,60,.38);
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 17px;
   background:
-    radial-gradient(circle at 50% 0%,
-      rgba(85, 70, 210, .25), transparent 60%),
-    linear-gradient(145deg, #131a38, #080e22);
-  color: #a78bfa;
+    radial-gradient(circle at 50% 0%, rgba(255,59,48,.10), transparent 60%),
+    linear-gradient(145deg, #171f2a, #0d131c);
+  color: #ff8066;
   text-align: center;
   padding: 25px;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, .25);
+  box-shadow: 0 15px 40px rgba(0,0,0,.25);
 }
 
 .workspace-placeholder h2 {
@@ -854,7 +789,7 @@ select:focus-visible {
 
 .workspace-placeholder p {
   max-width: 420px;
-  color: #909bb3;
+  color: #9aa5b3;
   font-size: 12px;
   line-height: 1.8;
 }
@@ -862,38 +797,98 @@ select:focus-visible {
 footer {
   margin-top: 45px;
   text-align: center;
-  color: #67728a;
+  color: #718091;
   font-size: 10px;
   padding-bottom: 12px;
 }
 
 /* ==========================================
-   GENERAL FORM AND ADMIN ELEMENTS
+   GENERAL FORMS AND ADMIN ELEMENTS
 ========================================== */
 
 input,
 textarea,
 select {
-  color: #f1f5ff;
-  background-color: rgba(7, 11, 29, .94);
-  border-color: rgba(115, 110, 195, .35);
+  color: #f5f7fa;
+  background-color: #0c121a;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #78839f;
+  color: #778496;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #8b75ff;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, .13);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(255,59,48,.12);
+  outline: none;
 }
 
 option {
-  background: #10152d;
-  color: #f1f5ff;
+  background: #111923;
+  color: #f5f7fa;
+}
+
+/* ==========================================
+   TABLES AND COMMON ADMIN ELEMENTS
+========================================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e8edf3;
+}
+
+th {
+  color: #ff947d;
+  background: #171f29;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+
+th, td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  text-align: left;
+}
+
+td {
+  font-size: 12px;
+  color: #c2ccd8;
+}
+
+tr:hover td {
+  background: rgba(255,255,255,.025);
+}
+
+/* Scrollbars */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b4654 #0b1118;
+}
+
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0b1118;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #3b4654;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #ff5945;
 }
 
 /* ==========================================
@@ -930,14 +925,14 @@ option {
   .topbar {
     height: 65px;
     padding: 0 16px;
-    background: rgba(7, 10, 27, .95);
+    background: rgba(13,18,26,.97);
   }
 
   .mobile-brand {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #d8d0ff;
+    color: #ff947d;
     font-size: 11px;
     font-weight: 800;
   }
@@ -962,13 +957,13 @@ option {
   .welcome {
     min-height: 185px;
     padding: 22px;
-    border-radius: 17px;
+    border-radius: 13px;
   }
 
   .welcome-art {
     width: 65px;
     height: 65px;
-    border-radius: 20px;
+    border-radius: 16px;
   }
 
   .welcome-art svg {
@@ -1009,6 +1004,10 @@ option {
   .panel {
     padding: 18px;
   }
+
+  .workspace-page h1 {
+    font-size: 25px;
+  }
 }
 
 @media (max-width: 380px) {
@@ -1026,6 +1025,7 @@ option {
 }
 
 /* Accessibility */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
